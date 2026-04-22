@@ -4,6 +4,7 @@ public class Rock : MonoBehaviour
 {
     [SerializeField] private Transform m_rockPos;
     [SerializeField] private Transform m_playerPos;
+    [SerializeField] private PlayerBase m_player;
 
     private float m_dist;
 
