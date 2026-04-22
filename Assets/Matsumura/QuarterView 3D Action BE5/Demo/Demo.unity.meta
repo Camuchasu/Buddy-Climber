@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+<<<<<<< Updated upstream
+guid: b2d579f4cc4d84a4bbc2bb29ce83372a
+=======
+guid: ccfc6617fc4e4f34bb776030d01bfcbd
+>>>>>>> Stashed changes
+DefaultImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 188720
+  packageName: Quarter View 3D Action Assets Pack
+  packageVersion: 1.0
+  assetPath: Assets/QuarterView 3D Action BE5/Demo/Demo.unity
+  uploadId: 417301
