@@ -2,23 +2,30 @@ using UnityEngine;
 
 public class RockSpowner : MonoBehaviour
 {
-    [SerializeField] private GameObject prefab;   // 落とすオブジェクト
-    [SerializeField] private float spawnInterval = 1.0f; // 出現間隔
-    [SerializeField] private Vector3 minPos; // 最小のランダム範囲
-    [SerializeField] private Vector3 maxPos; // 最大のランダム範囲
+    public GameObject prefab;
+    public float zPosition = 0f; 
+    public float yOffset = 5f;
+
     void Start()
     {
-        InvokeRepeating("SpawnObject", 1f, spawnInterval);
+        InvokeRepeating("Spawn", 1f, 1f);
     }
 
-    void SpawnObject()
-    {
-        Vector3 randomPosition = new Vector3
-            (Random.Range(minPos.x, maxPos.x),
-                Random.Range(minPos.y, maxPos.y),
-                Random.Range(minPos.z, maxPos.z)
-            );
+ void Spawn()
+{
+    float spawnY = Camera.main.transform.position.y + yOffset;
 
-        Instantiate(prefab, randomPosition, Quaternion.identity);
-    }
+    // カメラからその高さまでの距離
+    float distance = spawnY - Camera.main.transform.position.y;
+
+    // 画面の左下と右上をワールド座標に変換
+    Vector3 left = Camera.main.ViewportToWorldPoint(new Vector3(0, 0.5f, distance));
+    Vector3 right = Camera.main.ViewportToWorldPoint(new Vector3(1, 0.5f, distance));
+
+    float randomX = Random.Range(left.x, right.x);
+
+    Vector3 spawnPos = new Vector3(randomX, spawnY, zPosition);
+
+    Instantiate(prefab, spawnPos, Quaternion.identity);
+}
 }
