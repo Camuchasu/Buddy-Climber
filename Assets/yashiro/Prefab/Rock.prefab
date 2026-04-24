@@ -150,4 +150,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_rockPos: {fileID: 6929237057301199113}
-  m_playerPos: {fileID: 0}
+  m_playerPos: {fileID: 1015815904355069229, guid: 20890b47f02d7c74cba9d5775b7d3d73, type: 3}
