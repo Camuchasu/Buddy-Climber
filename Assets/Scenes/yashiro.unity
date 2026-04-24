@@ -271,9 +271,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prefab: {fileID: 8425967445156234642, guid: ad075184337984145957b0dc89e8e277, type: 3}
-  spawnInterval: 1
-  minPos: {x: 20.51, y: 9, z: -19.83}
-  maxPos: {x: 10.62, y: 9, z: -19.83}
+  zPosition: -18
+  yOffset: 5
 --- !u!4 &24280141
 Transform:
   m_ObjectHideFlags: 0
@@ -375,10 +374,11 @@ Transform:
   m_GameObject: {fileID: 326632824}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 15.6801, y: 21.02, z: -15.17}
+  m_LocalPosition: {x: 15.6801, y: 21.02, z: -11.77}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 963275701}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!1 &338127047
@@ -413,7 +413,7 @@ MonoBehaviour:
   windEffect: {fileID: 963275700}
   minInterval: 3
   maxInterval: 8
-  windDuration: 2
+  windDuration: 5
 --- !u!4 &338127049
 Transform:
   m_ObjectHideFlags: 0
@@ -1458,7 +1458,7 @@ ParticleSystem:
     rateOverTime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 10
+      scalar: 100
       minScalar: 10
       maxCurve:
         serializedVersion: 2
@@ -5352,13 +5352,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963275698}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.45407504, y: 0.54204786, z: -0.43833715, w: 0.5548519}
-  m_LocalPosition: {x: 10.46, y: 1.88, z: -18.7}
-  m_LocalScale: {x: 0.111236036, y: 0.06657781, z: 0.5}
+  m_LocalRotation: {x: 0.44867218, y: -0.54222894, z: -0.44386578, w: 0.554675}
+  m_LocalPosition: {x: 19.2801, y: -0.030000687, z: 3.5999994}
+  m_LocalScale: {x: 0.9140151, y: 0.06657781, z: 6.1607513}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: -1.644, y: 90, z: -78.262}
+  m_Father: {fileID: 326632827}
+  m_LocalEulerAnglesHint: {x: 0.939, y: 90.536, z: -78.265}
 --- !u!1 &1001005250
 GameObject:
   m_ObjectHideFlags: 0
@@ -5745,5 +5745,4 @@ SceneRoots:
   - {fileID: 14219149}
   - {fileID: 24280141}
   - {fileID: 338127049}
-  - {fileID: 963275701}
   - {fileID: 1618787266}

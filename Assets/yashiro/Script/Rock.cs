@@ -13,7 +13,7 @@ public class Rock : MonoBehaviour
 
         if (m_dist >= 5.0f)
         {
-            Destroy(gameObject);
+            //Destroy(gameObject);
         }
     }
 }
