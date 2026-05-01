@@ -271,7 +271,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prefab: {fileID: 8425967445156234642, guid: ad075184337984145957b0dc89e8e277, type: 3}
-  zPosition: -18
+  zPosition: -18.7
   yOffset: 5
 --- !u!4 &24280141
 Transform:
@@ -414,6 +414,8 @@ MonoBehaviour:
   minInterval: 3
   maxInterval: 8
   windDuration: 5
+  windDirection: {x: 1, y: 0, z: 0}
+  windPower: 10
 --- !u!4 &338127049
 Transform:
   m_ObjectHideFlags: 0
@@ -446,7 +448,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4633148e0f44f044ba5303f0666fd083, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rb: {fileID: 0}
+  rb: {fileID: 917635525}
   moveSpeed: 10
   jumpForce: 15
   coyoteTime: 0.15
@@ -5467,13 +5469,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963275698}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.44867218, y: -0.54222894, z: -0.44386578, w: 0.554675}
-  m_LocalPosition: {x: 19.2801, y: -0.030000687, z: 3.5999994}
+  m_LocalRotation: {x: 0.4422834, y: -0.5501, z: -0.45023203, w: 0.5468698}
+  m_LocalPosition: {x: 38.79, y: 0.99, z: 3.28}
   m_LocalScale: {x: 0.9140151, y: 0.06657781, z: 6.1607513}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 326632827}
-  m_LocalEulerAnglesHint: {x: 0.939, y: 90.536, z: -78.265}
+  m_LocalEulerAnglesHint: {x: -0.665, y: 270.203, z: -78.266}
 --- !u!1 &1001005250
 GameObject:
   m_ObjectHideFlags: 0
