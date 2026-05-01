@@ -8,9 +8,9 @@ public class Player : MonoBehaviour
     public float moveSpeed = 10f;
 
     [Header("ジャンプ")]
-    public float jumpForce = 5f;
-    public float coyoteTime = 0.15f;     // 地面から離れても少しジャンプ可能
-    public float jumpBufferTime = 0.15f; // 入力先行受付
+    public float jumpForce = 10f;
+    public float coyoteTime = 0.30f;     // 地面から離れても少しジャンプ可能
+    public float jumpBufferTime = 0.30f; // 入力先行受付
 
     private float coyoteTimer;
     private float jumpBufferTimer;
