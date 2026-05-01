@@ -525,6 +525,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 6490136728237138907, guid: d5b4b9e82e6e45e4283c6435e743b647, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1867384161}
+    - targetCorrespondingSourceObject: {fileID: 6490136728237138907, guid: d5b4b9e82e6e45e4283c6435e743b647, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1867384163}
   m_SourcePrefab: {fileID: 100100000, guid: d5b4b9e82e6e45e4283c6435e743b647, type: 3}
 --- !u!1 &1867384155 stripped
 GameObject:
@@ -543,13 +546,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e6f975041b31684da47e7098090b2af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentState: 0
-  controller: {fileID: 1867384157}
-  cameraTransform: {fileID: 1867384159}
-  moveSpeed: 5
-  jumpPower: 8
-  gravity: 20
-  airControl: 0.8
+  m_maxHp: 10
 --- !u!143 &1867384157
 CharacterController:
   m_ObjectHideFlags: 0
@@ -575,11 +572,6 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0.5, z: 0}
---- !u!4 &1867384159 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 5862077421946812769, guid: d5b4b9e82e6e45e4283c6435e743b647, type: 3}
-  m_PrefabInstance: {fileID: 1751072166}
-  m_PrefabAsset: {fileID: 0}
 --- !u!136 &1867384160
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -630,6 +622,23 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
+--- !u!114 &1867384163
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1867384155}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4633148e0f44f044ba5303f0666fd083, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rb: {fileID: 0}
+  moveSpeed: 10
+  jumpForce: 5
+  coyoteTime: 0.15
+  jumpBufferTime: 0.15
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
