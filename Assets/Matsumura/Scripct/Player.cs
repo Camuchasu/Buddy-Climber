@@ -15,7 +15,7 @@ public class Player : MonoBehaviour
     {
         rb.linearVelocity = (transform.forward * Input.GetAxis("Vertical") * Time.deltaTime * 500) +
                             (transform.right * Input.GetAxis("Horizontal") * Time.deltaTime * 500) + 
-                            (transform.up * rb.velocity.y);
+                            (transform.up * rb.linearVelocity.y);
         //transform.Translate(new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")) * Time.deltaTime * 5);
     }
 
