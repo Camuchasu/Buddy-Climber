@@ -96,7 +96,7 @@ BoxCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8532111776884381995}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 4e71d22f4e107ef438199bb696fbe472, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -124,6 +124,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   breakDelay: 1
   destroyDelay: 2
+  activeHeight: 20
+  player: {fileID: 0}
   shakeBeforeBreak: 1
   shakePower: 0.05
 --- !u!54 &4150676470166519710
