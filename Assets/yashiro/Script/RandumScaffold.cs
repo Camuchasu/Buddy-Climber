@@ -1,87 +1,102 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class RandumScaffold : MonoBehaviour
 {
-    [Header("Prefab")]
-    [SerializeField] private GameObject normalPrefab;
-    [SerializeField] private GameObject breakablePrefab;
+    [SerializeField] private GameObject normalFloorPrefab;
 
-    [Header("範囲")]
-    [SerializeField] private Vector3 minPosition;
-    [SerializeField] private Vector3 maxPosition;
-
-    [Header("生成設定")]
-    [SerializeField] private int spawnCount = 10;
-    [SerializeField] private float minDistance = 2.5f; // ←ここ少し大きめ推奨
-
-    [Header("高さトリガー")]
     [SerializeField] private Transform player;
-    [SerializeField] private float heightInterval = 10f;
 
-    [Header("崩れる床の割合")]
-    [Range(0f, 1f)]
-    [SerializeField] private float breakableRate = 0.3f;
+    [SerializeField] private Transform wall;
 
-    // 👇 今までの全部を保持
-    private List<Vector3> allPositions = new List<Vector3>();
+    [SerializeField] private float xRange = 5f;
 
-    private float nextSpawnHeight = 0f;
+    [SerializeField] private float zPos = 0f;
+
+    [SerializeField] private int startCount = 30;
+
+    [SerializeField] private float minDistance = 3f;
+
+    [SerializeField] private float spawnOffsetY = 20f;
+
+    [SerializeField] private float goalY = 200f;
+
+
+    private List<Vector3> positions = new List<Vector3>();
+
+    private float highestY;
 
     void Start()
     {
-        nextSpawnHeight = heightInterval;
-        SpawnObjects(player.position.y);
+         if(!player)
+        {
+            GameObject dummy = GameObject.Find("Player");
+            if(dummy)
+            {
+                player = dummy.transform;
+            }
+        }
+        else
+        {
+        highestY = player.position.y;
+
+        for (int i = 0; i < startCount; i++)
+        {
+            SpawnFloor(highestY);
+
+            highestY += 2f;
+        }
+        }
     }
 
     void Update()
     {
-        if (player.position.y > nextSpawnHeight)
+        
+        while (highestY < player.position.y + spawnOffsetY
+               && highestY < goalY)
         {
-            SpawnObjects(nextSpawnHeight);
-            nextSpawnHeight += heightInterval;
+            SpawnFloor(highestY);
+
+            highestY += 2f;
         }
+        
     }
 
-    void SpawnObjects(float baseHeight)
+    void SpawnFloor(float y)
     {
-        int attempts = 0;
-        int created = 0;
-
-        while (created < spawnCount && attempts < 2000)
+        for (int i = 0; i < 100; i++)
         {
-            Vector3 randomPosition = new Vector3(
-                Random.Range(minPosition.x, maxPosition.x),
-                baseHeight + Random.Range(minPosition.y, maxPosition.y),
-                Random.Range(minPosition.z, maxPosition.z)
-            );
+      Vector3 randomPos = new Vector3(
+    Random.Range(
+        wall.position.x - xRange,
+        wall.position.x + xRange
+    ),
+    y,
+    wall.position.z
+);
+            bool tooClose = false;
 
-            if (IsFarEnoughFromAll(randomPosition))
+            foreach (Vector3 pos in positions)
             {
-                GameObject prefabToSpawn = 
-                    (Random.value < breakableRate) ? breakablePrefab : normalPrefab;
-
-                GameObject Dummy = Instantiate(prefabToSpawn, randomPosition, Quaternion.identity);
-                Dummy.transform.parent = transform;
-
-                allPositions.Add(randomPosition);
-                created++;
+                if (Vector3.Distance(pos, randomPos) < minDistance)
+                {
+                    tooClose = true;
+                    break;
+                }
             }
 
-            attempts++;
-        }
-    }
-
-    bool IsFarEnoughFromAll(Vector3 position)
-    {
-        foreach (Vector3 pos in allPositions)
-        {
-            if (Vector3.Distance(pos, position) < minDistance)
+            if (!tooClose)
             {
-                return false;
+                GameObject floor =
+                    Instantiate(normalFloorPrefab,
+                                randomPos,
+                                Quaternion.identity,
+                                transform);
+
+                positions.Add(randomPos);
+
+                return;
             }
         }
-        return true;
     }
 }

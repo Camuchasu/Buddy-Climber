@@ -3,66 +3,89 @@ using UnityEngine;
 
 public class CollapsingFoor : MonoBehaviour
 {
-     [Header("設定")]
-    public float breakDelay = 1.0f;   // 乗ってから崩れるまでの時間
-    public float destroyDelay = 2.0f; // 落ちてから消えるまで
+    [Header("設定")]
+    public float breakDelay = 1f;
+    public float destroyDelay = 2f;
 
-    [Header("演出")]
+    [Header("発動高さ")]
+    public float activeHeight = 20f;
+
+    [Header("プレイヤー")]
+    public Transform player;
+
+    [Header("揺れ")]
     public bool shakeBeforeBreak = true;
     public float shakePower = 0.05f;
 
     private bool isTriggered = false;
+    private bool isActive = false;
+
     private Rigidbody rb;
-    private Vector3 startPos;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        startPos = transform.position;
 
-        // 最初は固定しておく
-        if (rb != null)
+        rb.isKinematic = true;
+    }
+
+    void Update()
+    {
+        if(!player)
         {
-            rb.isKinematic = true;
+            GameObject dummy = GameObject.Find("Player");
+            if(dummy)
+            {
+                player = dummy.transform;
+            }
+        }
+        else
+        {
+            if (!isActive && player.position.y >= activeHeight)
+            {
+                isActive = true;
+            }
         }
     }
 
     void OnCollisionEnter(Collision collision)
     {
+        if (!isActive) return;
+
         if (isTriggered) return;
 
         if (collision.gameObject.CompareTag("Player"))
         {
             isTriggered = true;
+
             StartCoroutine(BreakRoutine());
         }
     }
 
     IEnumerator BreakRoutine()
     {
+        Vector3 originalPos = transform.position;
+
         float timer = 0f;
 
-        // 揺れる演出（予兆）
         while (timer < breakDelay)
         {
             if (shakeBeforeBreak)
             {
-                transform.position = startPos + Random.insideUnitSphere * shakePower;
+                transform.position =
+                    originalPos +
+                    Random.insideUnitSphere * shakePower;
             }
 
             timer += Time.deltaTime;
+
             yield return null;
         }
 
-        transform.position = startPos;
+        transform.position = originalPos;
 
-        // 落下開始
-        if (rb != null)
-        {
-            rb.isKinematic = false;
-        }
+        rb.isKinematic = false;
 
-        // 一定時間後に削除
         Destroy(gameObject, destroyDelay);
     }
 }
