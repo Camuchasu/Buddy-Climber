@@ -1,123 +1,82 @@
 using UnityEngine;
-
-public class PlayerController : MonoBehaviour
+//プレイヤーを操作するためのスクリプト。移動やジャンプ、風の影響などを処理します。
+public class Player : MonoBehaviour
 {
     public Rigidbody rb;
-    private Animator anim; 
+    private Animator anim;
 
-    [Header("移動")]
+    [Header("移動・重力設定")]
     public float moveSpeed = 10f;
+    public float airWindMultiplier = 1.5f;
 
-    [Header("ジャンプ")]
-    public float jumpForce = 10f;
-    public float coyoteTime = 0.30f;
-    public float jumpBufferTime = 0.30f;
-
-    private float coyoteTimer;
-    private float jumpBufferTimer;
-    private bool isGrounded;
-    private bool wasGrounded; // ★前フレームの接地状態を記録
-
-    private WindSystem wind;
+    public bool isGrounded { get; private set; }
+    private bool wasGrounded;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        anim = GetComponent<Animator>(); 
-        wind = FindObjectOfType<WindSystem>();
+        anim = GetComponent<Animator>();
         wasGrounded = true;
     }
 
-    void Update()
+    // 脳(Controller)から呼ばれる移動命令
+    public void PerformMove(float h, float v)
     {
-        // ジャンプ入力受付
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            jumpBufferTimer = jumpBufferTime;
-        }
-        else
-        {
-            jumpBufferTimer -= Time.deltaTime;
-        }
+        Vector3 move = transform.forward * v + transform.right * h;
+        Vector3 velocity = move * moveSpeed;
+        velocity.y = rb.linearVelocity.y;
+        rb.linearVelocity = velocity;
+    }
 
-        // コヨーテタイム更新
-        if (isGrounded)
-        {
-            coyoteTimer = coyoteTime;
-        }
-        else
-        {
-            coyoteTimer -= Time.deltaTime;
-        }
+    // 風の影響を適用
+    public void ApplyWind(Vector3 direction, float power)
+    {
+        float multiplier = isGrounded ? 1f : airWindMultiplier;
+        rb.AddForce(direction.normalized * power * multiplier, ForceMode.Force);
+    }
 
-        // ジャンプ実行
-        if (jumpBufferTimer > 0 && coyoteTimer > 0)
-        {
-            Jump();
-            jumpBufferTimer = 0;
-        }
+    // ジャンプの物理実行
+    public void PerformJump(float force)
+    {
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+        rb.AddForce(Vector3.up * force, ForceMode.Impulse);
+        anim.SetTrigger("Jump");
+        isGrounded = false;
+    }
 
-        UpdateAnimation();
+    public void Rotate(Vector3 direction)
+{
+    // 入力（スティックの傾きなど）がほとんどない時は回転させない
+    if (direction.sqrMagnitude > 0.01f)
+    {
+        // 進みたい方向（direction）を向く回転を作る
+        Quaternion targetRotation = Quaternion.LookRotation(direction);
         
-        // ★着地の判定
+        // 瞬間的に向きを変える場合
+        transform.rotation = targetRotation;
+        
+        // もし「滑らかに」回転させたい場合はこちら（お好みで）
+        // transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 10f);
+    }
+}
+
+    // 接地判定の更新とアニメーション同期
+    public void UpdatePhysicsState()
+    {
+        if (anim == null) return;
+        anim.SetBool("Grounded", isGrounded);
+
+        Vector3 horizontalVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
+        anim.SetFloat("MoveSpeed", horizontalVelocity.magnitude);
+
         if (!wasGrounded && isGrounded)
         {
-            OnLand();
+            anim.SetTrigger("Land");
         }
         wasGrounded = isGrounded;
     }
 
-    void UpdateAnimation()
-    {
-        if (anim == null) return;
-
-        // Grounded: 常に接地状態を同期（空中ならMidairへ行くための基本条件）
-        anim.SetBool("Grounded", isGrounded);
-
-        // MoveSpeed: 移動アニメーションのブレンド用
-        Vector3 horizontalVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
-        anim.SetFloat("MoveSpeed", horizontalVelocity.magnitude);
-    }
-
-    void Jump()
-    {
-        rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
-        rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
-
-        isGrounded = false;
-        coyoteTimer = 0;
-
-        // ★ジャンプのアニメーションを即座に再生
-        anim.SetTrigger("Jump"); 
-    }
-
-    void OnLand()
-    {
-        // ★着地のアニメーションを再生
-        anim.SetTrigger("Land");
-    }
-
-    void FixedUpdate()
-    {
-        float h = Input.GetAxis("Horizontal");
-        float v = Input.GetAxis("Vertical");
-
-        Vector3 move = transform.forward * v + transform.right * h;
-        Vector3 velocity = move * moveSpeed;
-        velocity.y = rb.linearVelocity.y;
-
-        rb.linearVelocity = velocity;
-
-        if (wind != null && wind.IsBlowing)
-        {
-            float multiplier = isGrounded ? 1f : airWindMultiplier;
-            rb.AddForce(wind.windDirection.normalized * wind.windPower * multiplier, ForceMode.Force);
-        }
-    }
-
-    [Header("風の影響")]
-    public float airWindMultiplier = 1.5f;
-
+    // --- 接地判定ロジック ---
     void OnCollisionStay(Collision collision)
     {
         isGrounded = false;
@@ -130,9 +89,5 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
-
-    void OnCollisionExit(Collision collision)
-    {
-        isGrounded = false;
-    }
+    void OnCollisionExit(Collision collision) => isGrounded = false;
 }

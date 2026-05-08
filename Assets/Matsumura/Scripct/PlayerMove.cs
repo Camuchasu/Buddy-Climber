@@ -24,15 +24,15 @@ public class PlayerMove : MonoBehaviour
         CheckGround();
         CheckCeiling();
 
-        if (isGrounded)
-        {
-            Debug.Log("接地中");
-        }
+        // if (isGrounded)
+        // {
+        //     Debug.Log("接地中");
+        // }
 
-        if (isCeiling)
-        {
-            Debug.Log("頭上ヒット");
-        }
+        // if (isCeiling)
+        // {
+        //     Debug.Log("頭上ヒット");
+        // }
     }
 
     void CheckGround()
