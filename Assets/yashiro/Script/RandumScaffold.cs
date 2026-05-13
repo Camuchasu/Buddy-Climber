@@ -29,6 +29,10 @@ public class RandumScaffold : MonoBehaviour
 
     [SerializeField] private float iceHeight = 100f;
 
+    [SerializeField] private float collapsingEndHeight = 100f;
+
+    [SerializeField] private float iceEndHeight = 150f;
+
 
     private List<Vector3> positions = new List<Vector3>();
 
@@ -98,13 +102,14 @@ public class RandumScaffold : MonoBehaviour
               
             GameObject prefabToSpawn;
 
-            if (y >= iceHeight)
+           if (y >= iceHeight && y < iceEndHeight)
             {
                 prefabToSpawn = iceFloorPrefab;
             }
-            else if (y >= collapsingHeight)
+            else if (y >= collapsingHeight &&
+                        y < collapsingEndHeight)
             {
-                prefabToSpawn = collapsingFloorPrefab;
+                 prefabToSpawn = collapsingFloorPrefab;
             }
             else
             {
