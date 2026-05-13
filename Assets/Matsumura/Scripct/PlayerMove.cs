@@ -8,8 +8,8 @@ public class PlayerMove : MonoBehaviour
 
     [Header("Movement Settings")]
     public float moveSpeed = 5f;
-    public float stepHeight = 0.8f; // よじ登り判定の高さ
-    public float stepSmooth = 5f;  // よじ登る速度（力）
+    public float stepHeight = 0.8f;
+    public float stepSmooth = 5f;
 
     [Header("Jump Settings")]
     public float jumpForce = 5f;
@@ -26,8 +26,11 @@ public class PlayerMove : MonoBehaviour
     public float groundCheckDistance = 0.1f;
 
     private bool isGrounded;
+    private bool isOnIce;
+
     private Rigidbody rb;
     private PlayerStamina2 stamina;
+
     private Vector3 moveInput;
 
     // 通常値保存用
@@ -38,9 +41,12 @@ public class PlayerMove : MonoBehaviour
     void Awake()
     {
         rb = GetComponent<Rigidbody>();
+
         stamina = GetComponent<PlayerStamina2>();
+
         rb.freezeRotation = true;
 
+        // 初期値保存
         defaultJumpForce = jumpForce;
         defaultLinearDamping = rb.linearDamping;
         defaultMass = rb.mass;
@@ -52,11 +58,12 @@ public class PlayerMove : MonoBehaviour
 
         float h = Input.GetAxisRaw("Horizontal");
         float v = Input.GetAxisRaw("Vertical");
+
         moveInput = new Vector3(h, 0, v).normalized;
 
         HandleModelRotation();
 
-        // 地面にいる時だけ通常のジャンプ
+        // 地面にいる時だけジャンプ
         if (Input.GetButtonDown("Jump") && isGrounded)
         {
             TryJump();
@@ -70,59 +77,85 @@ public class PlayerMove : MonoBehaviour
 
     void ApplyMovement()
     {
-        Vector3 velocity = moveInput * moveSpeed;
-        velocity.y = rb.linearVelocity.y;
-        rb.linearVelocity = velocity;
+        // 氷床中
+        if (isOnIce)
+        {
+            rb.AddForce(
+                moveInput * moveSpeed,
+                ForceMode.Acceleration
+            );
+        }
+        // 通常床
+        else
+        {
+            Vector3 velocity = moveInput * moveSpeed;
+
+            velocity.y = rb.linearVelocity.y;
+
+            rb.linearVelocity = velocity;
+        }
     }
 
     void HandleModelRotation()
     {
         if (moveInput != Vector3.zero && modelTransform != null)
         {
-            Quaternion targetRotation = Quaternion.LookRotation(moveInput);
-            modelTransform.rotation = Quaternion.RotateTowards(
-                modelTransform.rotation,
-                targetRotation,
-                rotationSpeed * Time.deltaTime
-            );
+            Quaternion targetRotation =
+                Quaternion.LookRotation(moveInput);
+
+            modelTransform.rotation =
+                Quaternion.RotateTowards(
+                    modelTransform.rotation,
+                    targetRotation,
+                    rotationSpeed * Time.deltaTime
+                );
         }
     }
 
-    // --- 壁に当たっている間の処理 ---
-    // --- 修正版：ボタンを押している間、物理を無視して持ち上げる ---
+    // 壁よじ登り
     private void OnCollisionStay(Collision collision)
     {
-        // 1. スペースキー（Jump）が押されているか
+        // ジャンプ押してないなら終了
         if (!Input.GetButton("Jump")) return;
 
-        // 2. 移動入力があるか
+        // 入力ないなら終了
         if (moveInput.magnitude < 0.1f) return;
 
-        // 3. 相手のレイヤー確認
+        // GroundLayer判定
         if (((1 << collision.gameObject.layer) & groundLayer) != 0)
         {
             foreach (ContactPoint contact in collision.contacts)
             {
-                // プレイヤーの足元からの高さを計算
-                float contactHeight = contact.point.y - transform.position.y;
+                // 接触位置の高さ
+                float contactHeight =
+                    contact.point.y - transform.position.y;
 
-                // 4. 判定条件を少し広げました（0.0f 〜 stepHeight）
-                if (contactHeight > 0.0f && contactHeight < stepHeight)
+                // 足元〜stepHeightまで
+                if (contactHeight > 0.0f &&
+                    contactHeight < stepHeight)
                 {
-                    // 衝突方向の計算
-                    Vector3 dirToContact = (contact.point - transform.position).normalized;
+                    // 壁方向
+                    Vector3 dirToContact =
+                        (contact.point - transform.position)
+                        .normalized;
+
                     dirToContact.y = 0;
 
-                    // 5. 壁に向かって進んでいるなら
-                    if (Vector3.Dot(moveInput, dirToContact) > 0.2f) 
+                    // 壁方向へ入力してるか
+                    if (Vector3.Dot(moveInput, dirToContact) > 0.2f)
                     {
-                        // 【ここがポイント】重力を打ち消すように、直接速度を上書き
-                        // stepSmoothは 7〜10 くらいに上げるとスムーズです
-                        rb.linearVelocity = new Vector3(rb.linearVelocity.x, stepSmooth, rb.linearVelocity.z);
-                        
-                        // 壁にめり込まないよう、少しだけ浮かせて前に進める
-                        rb.position += Vector3.up * 0.05f + moveInput * 0.02f;
-                        break; 
+                        rb.linearVelocity =
+                            new Vector3(
+                                rb.linearVelocity.x,
+                                stepSmooth,
+                                rb.linearVelocity.z
+                            );
+
+                        rb.position +=
+                            Vector3.up * 0.05f +
+                            moveInput * 0.02f;
+
+                        break;
                     }
                 }
             }
@@ -131,18 +164,34 @@ public class PlayerMove : MonoBehaviour
 
     void TryJump()
     {
-        if (stamina != null && stamina.UseStamina(jumpStaminaCost))
+        if (stamina != null &&
+            stamina.UseStamina(jumpStaminaCost))
         {
-            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            rb.AddForce(
+                Vector3.up * jumpForce,
+                ForceMode.Impulse
+            );
         }
     }
 
     void CheckGround()
     {
-        Vector3 origin = transform.position + Vector3.down * (playerHeight * 0.5f - groundCheckRadius);
-        if (Physics.SphereCast(origin, groundCheckRadius, Vector3.down, out RaycastHit hit, groundCheckDistance, groundLayer))
+        Vector3 origin =
+            transform.position +
+            Vector3.down *
+            (playerHeight * 0.5f - groundCheckRadius);
+
+        if (Physics.SphereCast(
+                origin,
+                groundCheckRadius,
+                Vector3.down,
+                out RaycastHit hit,
+                groundCheckDistance,
+                groundLayer))
         {
-            float angle = Vector3.Angle(hit.normal, Vector3.up);
+            float angle =
+                Vector3.Angle(hit.normal, Vector3.up);
+
             isGrounded = angle < 45f;
         }
         else
@@ -151,9 +200,30 @@ public class PlayerMove : MonoBehaviour
         }
     }
 
+    // 氷床状態変更
     public void SetIceState(bool ice)
     {
-        if (ice) { jumpForce = defaultJumpForce * 0.6f; rb.linearDamping = 0f; rb.mass = 0.7f; }
-        else { jumpForce = defaultJumpForce; rb.linearDamping = defaultLinearDamping; rb.mass = defaultMass; }
+        isOnIce = ice;
+
+        if (ice)
+        {
+            // ジャンプ弱化
+            jumpForce = defaultJumpForce * 0.6f;
+
+            // 滑る
+            rb.linearDamping = 0.05f;
+
+            // 少し軽く
+            rb.mass = 0.7f;
+        }
+        else
+        {
+            // 元に戻す
+            jumpForce = defaultJumpForce;
+
+            rb.linearDamping = defaultLinearDamping;
+
+            rb.mass = defaultMass;
+        }
     }
 }
