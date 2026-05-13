@@ -502,9 +502,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rb: {fileID: 917635525}
   moveSpeed: 10
-  jumpForce: 15
-  coyoteTime: 0.15
-  jumpBufferTime: 0.15
   airWindMultiplier: 1.5
 --- !u!54 &917635525
 Rigidbody:
@@ -569,6 +566,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_maxHp: 10
+  motor: {fileID: 0}
+  stamina: {fileID: 0}
+  jumpForce: 10
+  coyoteTime: 0.3
+  jumpBufferTime: 0.3
 --- !u!143 &917635528
 CharacterController:
   m_ObjectHideFlags: 0
@@ -5808,7 +5810,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1647434599}
-  - component: {fileID: 1647434598}
+  - component: {fileID: 1647434600}
   m_Layer: 0
   m_Name: RandumScaffold
   m_TagString: Untagged
@@ -5816,27 +5818,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1647434598
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1647434597}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 50209057b46b18a488af416af651a651, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  normalFloorPrefab: {fileID: 7339200108382122309, guid: 20890b47f02d7c74cba9d5775b7d3d73, type: 3}
-  player: {fileID: 0}
-  wall: {fileID: 1001005254}
-  xRange: 5
-  zPos: 0
-  startCount: 30
-  minDistance: 3
-  spawnOffsetY: 20
-  goalY: 200
 --- !u!4 &1647434599
 Transform:
   m_ObjectHideFlags: 0
@@ -5852,6 +5833,31 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1024476964}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1647434600
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1647434597}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50209057b46b18a488af416af651a651, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  normalFloorPrefab: {fileID: 7339200108382122309, guid: 20890b47f02d7c74cba9d5775b7d3d73, type: 3}
+  player: {fileID: 917635530}
+  wall: {fileID: 1001005254}
+  xRange: 5
+  zPos: 0
+  startCount: 30
+  minDistance: 3
+  spawnOffsetY: 20
+  goalY: 200
+  collapsingFloorPrefab: {fileID: 8532111776884381995, guid: e9a13664a6142994c9863b1f9dbc0ce5, type: 3}
+  iceFloorPrefab: {fileID: 488610472713918453, guid: 86b0014c32243ff438689dc82e01ed7c, type: 3}
+  collapsingHeight: 50
+  iceHeight: 100
 --- !u!1 &1983671176
 GameObject:
   m_ObjectHideFlags: 0

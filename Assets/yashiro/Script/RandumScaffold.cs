@@ -21,6 +21,14 @@ public class RandumScaffold : MonoBehaviour
 
     [SerializeField] private float goalY = 200f;
 
+    [SerializeField] private GameObject collapsingFloorPrefab;
+
+    [SerializeField] private GameObject iceFloorPrefab;
+
+    [SerializeField] private float collapsingHeight = 50f;
+
+    [SerializeField] private float iceHeight = 100f;
+
 
     private List<Vector3> positions = new List<Vector3>();
 
@@ -57,7 +65,7 @@ public class RandumScaffold : MonoBehaviour
         {
             SpawnFloor(highestY);
 
-            highestY += 2f;
+            highestY += 3f;
         }
         
     }
@@ -87,11 +95,27 @@ public class RandumScaffold : MonoBehaviour
 
             if (!tooClose)
             {
-                GameObject floor =
-                    Instantiate(normalFloorPrefab,
-                                randomPos,
-                                Quaternion.identity,
-                                transform);
+              
+            GameObject prefabToSpawn;
+
+            if (y >= iceHeight)
+            {
+                prefabToSpawn = iceFloorPrefab;
+            }
+            else if (y >= collapsingHeight)
+            {
+                prefabToSpawn = collapsingFloorPrefab;
+            }
+            else
+            {
+                prefabToSpawn = normalFloorPrefab;
+            }
+
+            GameObject floor =
+                Instantiate(prefabToSpawn,
+                            randomPos,
+                            Quaternion.identity,
+                            transform);
 
                 positions.Add(randomPos);
 
