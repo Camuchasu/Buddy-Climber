@@ -8,8 +8,8 @@ public class PlayerMove : MonoBehaviour
 
     [Header("Movement Settings")]
     public float moveSpeed = 5f;
-    public float stepHeight = 0.6f; // 少し高めに設定すると登りやすいです
-    public float stepSmooth = 5f;  // 持ち上げる力（2fだと弱いので少し上げました）
+    public float stepHeight = 0.8f; // よじ登り判定の高さ
+    public float stepSmooth = 5f;  // よじ登る速度（力）
 
     [Header("Jump Settings")]
     public float jumpForce = 5f;
@@ -41,7 +41,6 @@ public class PlayerMove : MonoBehaviour
         stamina = GetComponent<PlayerStamina2>();
         rb.freezeRotation = true;
 
-        // 初期値保存
         defaultJumpForce = jumpForce;
         defaultLinearDamping = rb.linearDamping;
         defaultMass = rb.mass;
@@ -53,11 +52,11 @@ public class PlayerMove : MonoBehaviour
 
         float h = Input.GetAxisRaw("Horizontal");
         float v = Input.GetAxisRaw("Vertical");
-
         moveInput = new Vector3(h, 0, v).normalized;
 
         HandleModelRotation();
 
+        // 地面にいる時だけ通常のジャンプ
         if (Input.GetButtonDown("Jump") && isGrounded)
         {
             TryJump();
@@ -67,7 +66,6 @@ public class PlayerMove : MonoBehaviour
     void FixedUpdate()
     {
         ApplyMovement();
-        // FixedUpdate内でのTryStepUp(Ray判定)は空にします（Collision判定に移行するため）
     }
 
     void ApplyMovement()
@@ -90,45 +88,46 @@ public class PlayerMove : MonoBehaviour
         }
     }
 
-   // --- 左右の移動でも反応する物理よじ登り処理 ---
+    // --- 壁に当たっている間の処理 ---
+    // --- 修正版：ボタンを押している間、物理を無視して持ち上げる ---
     private void OnCollisionStay(Collision collision)
     {
-        // 1. 移動入力がまったくない場合は登らない（静止中の浮き上がり防止）
+        // 1. スペースキー（Jump）が押されているか
+        if (!Input.GetButton("Jump")) return;
+
+        // 2. 移動入力があるか
         if (moveInput.magnitude < 0.1f) return;
 
-        // 2. ぶつかっている相手のレイヤーを確認
+        // 3. 相手のレイヤー確認
         if (((1 << collision.gameObject.layer) & groundLayer) != 0)
         {
             foreach (ContactPoint contact in collision.contacts)
             {
-                // 3. 接触点の高さを計算（プレイヤーの足元からの相対高さ）
+                // プレイヤーの足元からの高さを計算
                 float contactHeight = contact.point.y - transform.position.y;
 
-                // 4. 判定：足元(0.1f)から設定高さ(stepHeight)の間でぶつかっているか
-                if (contactHeight > 0.1f && contactHeight < stepHeight)
+                // 4. 判定条件を少し広げました（0.0f 〜 stepHeight）
+                if (contactHeight > 0.0f && contactHeight < stepHeight)
                 {
-                    // 5. 衝突方向の確認（壁が「進もうとしている方向」にあるか）
-                    // 衝突点への方向ベクトル
+                    // 衝突方向の計算
                     Vector3 dirToContact = (contact.point - transform.position).normalized;
-                    dirToContact.y = 0; // 高さ方向は無視して水平方向だけで判定
+                    dirToContact.y = 0;
 
-                    // 入力方向と衝突方向が近い（＝壁に向かって歩いている）場合のみ登る
-                    if (Vector3.Dot(moveInput, dirToContact) > 0.3f)
+                    // 5. 壁に向かって進んでいるなら
+                    if (Vector3.Dot(moveInput, dirToContact) > 0.2f) 
                     {
-                        // 上方向にスライド
+                        // 【ここがポイント】重力を打ち消すように、直接速度を上書き
+                        // stepSmoothは 7〜10 くらいに上げるとスムーズです
                         rb.linearVelocity = new Vector3(rb.linearVelocity.x, stepSmooth, rb.linearVelocity.z);
                         
-                        // 角に乗り上げやすくするための前進補正（入力方向へ押し出す）
-                        rb.position += moveInput * 0.03f;
+                        // 壁にめり込まないよう、少しだけ浮かせて前に進める
+                        rb.position += Vector3.up * 0.05f + moveInput * 0.02f;
                         break; 
                     }
                 }
             }
         }
     }
-
-    // 以前のRaycast方式は空のメソッドとして残すか、削除してください
-    void TryStepUp() { }
 
     void TryJump()
     {
@@ -154,17 +153,7 @@ public class PlayerMove : MonoBehaviour
 
     public void SetIceState(bool ice)
     {
-        if (ice)
-        {
-            jumpForce = defaultJumpForce * 0.6f;
-            rb.linearDamping = 0f;
-            rb.mass = 0.7f;
-        }
-        else
-        {
-            jumpForce = defaultJumpForce;
-            rb.linearDamping = defaultLinearDamping;
-            rb.mass = defaultMass;
-        }
+        if (ice) { jumpForce = defaultJumpForce * 0.6f; rb.linearDamping = 0f; rb.mass = 0.7f; }
+        else { jumpForce = defaultJumpForce; rb.linearDamping = defaultLinearDamping; rb.mass = defaultMass; }
     }
 }
