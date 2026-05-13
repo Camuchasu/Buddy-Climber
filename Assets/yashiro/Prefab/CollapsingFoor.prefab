@@ -123,7 +123,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   breakDelay: 1
-  destroyDelay: 2
+  respawnDelay: 3
+  floorPrefab: {fileID: 8532111776884381995}
   activeHeight: 20
   player: {fileID: 0}
   shakeBeforeBreak: 1

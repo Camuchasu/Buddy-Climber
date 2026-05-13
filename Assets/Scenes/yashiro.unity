@@ -408,7 +408,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &652571752
 Transform:
   m_ObjectHideFlags: 0
@@ -5521,8 +5521,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1024476962}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 20.22357, y: 12.402548, z: -154.74438}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
+  m_LocalPosition: {x: 5.37, y: 11.55, z: 118.51}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -5534,7 +5534,7 @@ Transform:
   - {fileID: 1618787266}
   - {fileID: 24280141}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!1001 &1152335116
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5561,7 +5561,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5862077421946812769, guid: d5b4b9e82e6e45e4283c6435e743b647, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5862077421946812769, guid: d5b4b9e82e6e45e4283c6435e743b647, type: 3}
       propertyPath: m_LocalRotation.x
@@ -5569,7 +5569,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5862077421946812769, guid: d5b4b9e82e6e45e4283c6435e743b647, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5862077421946812769, guid: d5b4b9e82e6e45e4283c6435e743b647, type: 3}
       propertyPath: m_LocalRotation.z
@@ -5581,7 +5581,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5862077421946812769, guid: d5b4b9e82e6e45e4283c6435e743b647, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 180
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5862077421946812769, guid: d5b4b9e82e6e45e4283c6435e743b647, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
@@ -5688,6 +5688,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 489fcaaee0193d64caee76d03c782a00, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  modelTransform: {fileID: 0}
+  rotationSpeed: 720
+  moveSpeed: 5
+  stepHeight: 0.5
+  stepSmooth: 2
   jumpForce: 50
   jumpStaminaCost: 20
   groundLayer:
@@ -5696,8 +5701,6 @@ MonoBehaviour:
   playerHeight: 2
   groundCheckRadius: 0.12
   groundCheckDistance: 0.05
-  ceilingCheckRadius: 0.25
-  ceilingCheckDistance: 0.1
 --- !u!114 &1152335122
 MonoBehaviour:
   m_ObjectHideFlags: 0

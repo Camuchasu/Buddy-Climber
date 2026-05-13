@@ -1,11 +1,14 @@
-using System.Collections;
 using UnityEngine;
+using System.Collections;
 
-public class CollapsingFoor : MonoBehaviour
+public class CollapsingFloor : MonoBehaviour
 {
     [Header("設定")]
     public float breakDelay = 1f;
-    public float destroyDelay = 2f;
+    public float respawnDelay = 3f;
+
+    [Header("Prefab")]
+    public GameObject floorPrefab;
 
     [Header("発動高さ")]
     public float activeHeight = 20f;
@@ -20,72 +23,60 @@ public class CollapsingFoor : MonoBehaviour
     private bool isTriggered = false;
     private bool isActive = false;
 
-    private Rigidbody rb;
-
-    void Start()
-    {
-        rb = GetComponent<Rigidbody>();
-
-        rb.isKinematic = true;
-    }
-
     void Update()
     {
-        if(!player)
+        if (!player)
         {
             GameObject dummy = GameObject.Find("Player");
-            if(dummy)
-            {
-                player = dummy.transform;
-            }
+            if (dummy) player = dummy.transform;
         }
         else
         {
             if (!isActive && player.position.y >= activeHeight)
-            {
                 isActive = true;
-            }
         }
     }
 
     void OnCollisionEnter(Collision collision)
     {
-        if (!isActive) return;
-
-        if (isTriggered) return;
+        if (!isActive || isTriggered) return;
 
         if (collision.gameObject.CompareTag("Player"))
         {
             isTriggered = true;
-
-            StartCoroutine(BreakRoutine());
+            StartCoroutine(BreakAndRespawn());
         }
     }
 
-    IEnumerator BreakRoutine()
+    IEnumerator BreakAndRespawn()
     {
-        Vector3 originalPos = transform.position;
+        Vector3 pos = transform.position;
+        Quaternion rot = transform.rotation;
 
         float timer = 0f;
 
+        // 揺れ
         while (timer < breakDelay)
         {
             if (shakeBeforeBreak)
             {
-                transform.position =
-                    originalPos +
-                    Random.insideUnitSphere * shakePower;
+                transform.position = pos + Random.insideUnitSphere * shakePower;
             }
 
             timer += Time.deltaTime;
-
             yield return null;
         }
 
-        transform.position = originalPos;
+        transform.position = pos;
 
-        rb.isKinematic = false;
+        // ここで床を消す
+        Destroy(gameObject);
 
-        Destroy(gameObject, destroyDelay);
+        // 復活待ち
+        yield return new WaitForSeconds(respawnDelay);
+
+        // Prefabで再生成
+        Debug.Log("復活処理開始");
+        Instantiate(floorPrefab, pos, rot);
     }
 }
