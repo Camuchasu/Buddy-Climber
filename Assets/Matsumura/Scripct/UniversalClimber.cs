@@ -3,7 +3,7 @@ using UnityEngine;
 public class UniversalClimber : MonoBehaviour
 {
     public Player motor;            // 体の動き担当
-    public PlayerStamina stamina;    // スタミナ管理担当
+    public PlayerStamina2 stamina;    // スタミナ管理担当
     private WindSystem wind;
 
     [Header("移動設定")]

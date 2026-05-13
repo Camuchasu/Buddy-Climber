@@ -4,7 +4,7 @@ using UnityEngine;
 public class PlayerBase : CharaBase
 {
  public Player motor;
-    public PlayerStamina stamina; // 先ほど作成したスタミナスクリプト
+    public PlayerStamina2 stamina; // 先ほど作成したスタミナスクリプト
     private WindSystem wind;
 
     [Header("ジャンプ設定")]

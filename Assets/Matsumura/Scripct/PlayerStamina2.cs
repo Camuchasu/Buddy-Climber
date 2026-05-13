@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI; // UIを使うために必要
 
-public class PlayerStamina : MonoBehaviour
+public class PlayerStamina2 : MonoBehaviour
 {
     [Header("Stamina Settings")]
     public float maxStamina = 100f;
@@ -19,7 +19,6 @@ public class PlayerStamina : MonoBehaviour
         currentStamina = maxStamina;
         UpdateUI();
     }
-
     void Update()
     {
         // 自動回復の処理
@@ -34,7 +33,6 @@ public class PlayerStamina : MonoBehaviour
             UpdateUI();
         }
     }
-
     // --- 外部（移動スクリプトなど）から呼ぶ関数 ---
 
     // 1. 一時的な消費（ジャンプなど）
