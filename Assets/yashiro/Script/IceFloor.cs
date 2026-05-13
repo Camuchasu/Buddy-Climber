@@ -2,13 +2,18 @@ using UnityEngine;
 
 public class IceFloor : MonoBehaviour
 {
-     private void OnCollisionEnter(Collision collision)
+    
+    private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            Rigidbody rb = collision.gameObject.GetComponent<Rigidbody>();
+            PlayerMove player =
+                collision.gameObject.GetComponent<PlayerMove>();
 
-            rb.linearDamping = 0f;
+            if (player != null)
+            {
+                player.SetIceState(true);
+            }
         }
     }
 
@@ -16,9 +21,13 @@ public class IceFloor : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            Rigidbody rb = collision.gameObject.GetComponent<Rigidbody>();
+            PlayerMove player =
+                collision.gameObject.GetComponent<PlayerMove>();
 
-            rb.linearDamping = 5f;
+            if (player != null)
+            {
+                player.SetIceState(false);
+            }
         }
     }
 }
