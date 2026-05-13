@@ -2,6 +2,10 @@ using UnityEngine;
 
 public class PlayerMove : MonoBehaviour
 {
+    [Header("Jump Settings")]
+    public float jumpForce = 5f;
+    public float jumpStaminaCost = 20f; // ジャンプ1回で消費する量
+
     [Header("Layer")]
     public LayerMask groundLayer;
 
@@ -18,67 +22,62 @@ public class PlayerMove : MonoBehaviour
 
     private bool isGrounded;
     private bool isCeiling;
+    private Rigidbody rb;
+    private PlayerStamina2 stamina; // スタミナスクリプトとの連携用
+
+    void Awake()
+    {
+        rb = GetComponent<Rigidbody>();
+        stamina = GetComponent<PlayerStamina2>(); // 同じオブジェクトに付いている想定
+    }
 
     void Update()
     {
         CheckGround();
         CheckCeiling();
 
-        // if (isGrounded)
-        // {
-        //     Debug.Log("接地中");
-        // }
+        // ジャンプ入力（スペースキー）の検知
+        if (Input.GetButtonDown("Jump") && isGrounded)
+        {
+            TryJump();
+        }
+    }
 
-        // if (isCeiling)
-        // {
-        //     Debug.Log("頭上ヒット");
-        // }
+    void TryJump()
+    {
+        // スタミナがあるか確認してからジャンプ
+        if (stamina != null)
+        {
+            if (stamina.UseStamina(jumpStaminaCost))
+            {
+                // 上方向に力を加える
+                rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+                Debug.Log("ジャンプ成功！");
+            }
+            else
+            {
+                Debug.Log("スタミナが足りません！");
+            }
+        }
     }
 
     void CheckGround()
-{
-    Vector3 origin =
-        transform.position +
-        Vector3.down * (playerHeight * 0.5f - groundCheckRadius);
-
-    if (Physics.SphereCast(
-        origin,
-        groundCheckRadius,
-        Vector3.down,
-        out RaycastHit hit,
-        groundCheckDistance,
-        groundLayer))
     {
-        // 面の向きを確認
-        float angle = Vector3.Angle(hit.normal, Vector3.up);
+        Vector3 origin = transform.position + Vector3.down * (playerHeight * 0.5f - groundCheckRadius);
+        if (Physics.SphereCast(origin, groundCheckRadius, Vector3.down, out RaycastHit hit, groundCheckDistance, groundLayer))
+        {
+            float angle = Vector3.Angle(hit.normal, Vector3.up);
+            isGrounded = angle < 45f;
+        }
+        else
+        {
+            isGrounded = false;
+        }
+    }
 
-        // 角度が小さいなら地面
-        isGrounded = angle < 45f;
-    }
-    else
-    {
-        isGrounded = false;
-    }
-}
     void CheckCeiling()
     {
-        Vector3 origin =
-            transform.position +
-            Vector3.up * (playerHeight * 0.5f - ceilingCheckRadius);
-
-        isCeiling = Physics.SphereCast(
-            origin,
-            ceilingCheckRadius,
-            Vector3.up,
-            out RaycastHit hit,
-            ceilingCheckDistance,
-            groundLayer
-        );
-
-        Debug.DrawRay(
-            origin,
-            Vector3.up * ceilingCheckDistance,
-            Color.blue
-        );
+        Vector3 origin = transform.position + Vector3.up * (playerHeight * 0.5f - ceilingCheckRadius);
+        isCeiling = Physics.SphereCast(origin, ceilingCheckRadius, Vector3.up, out RaycastHit hit, ceilingCheckDistance, groundLayer);
     }
 }
