@@ -4,43 +4,43 @@ public class GimmickManager : MonoBehaviour
 {
     [SerializeField] private Transform player;
 
-    [Header("発動高さ")]
-    [SerializeField] private float fallingFloorHeight = 20f;
-    [SerializeField] private float windHeight = 40f;
-    [SerializeField] private float rockHeight = 60f;
+    [Header("風")]
+    [SerializeField] private float windStart = 40f;
+    [SerializeField] private float windEnd = 60f;
+
+    [Header("岩")]
+    [SerializeField] private float rockStart = 60f;
+    [SerializeField] private float rockEnd = 80f;
 
     [Header("ギミック")]
-    [SerializeField] private GameObject fallingFloorArea;
     [SerializeField] private GameObject windSystem;
+    [SerializeField] private GameObject windEffect;
     [SerializeField] private GameObject rockSpawner;
-
-    private bool fallingActivated;
-    private bool windActivated;
-    private bool rockActivated;
 
     void Update()
     {
         float y = player.position.y;
 
-        if (!fallingActivated && y >= fallingFloorHeight)
-        {
-            fallingFloorArea.SetActive(true);
-
-            fallingActivated = true;
-        }
-
-        if (!windActivated && y >= windHeight)
+        // 風
+        if (y >= windStart && y < windEnd)
         {
             windSystem.SetActive(true);
-
-            windActivated = true;
+            windEffect.SetActive(true);
+        }
+        else
+        {
+            windSystem.SetActive(false);
+            windEffect.SetActive(false);
         }
 
-        if (!rockActivated && y >= rockHeight)
+        // 岩
+        if (y >= rockStart && y < rockEnd)
         {
             rockSpawner.SetActive(true);
-
-            rockActivated = true;
+        }
+        else
+        {
+            rockSpawner.SetActive(false);
         }
     }
 }

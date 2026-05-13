@@ -3,7 +3,6 @@ using UnityEngine;
 public class Rock : MonoBehaviour
 {
     [SerializeField] private Transform m_rockPos;
-    [SerializeField] private Transform m_playerPos;
 
     private float m_dist;
 
@@ -15,16 +14,14 @@ public class Rock : MonoBehaviour
     {
         rb.constraints = RigidbodyConstraints.FreezeRotation;
     }
+
+      Destroy(gameObject, 2f);
 }
 
     void Update()
     {
-        m_dist = Vector3.Distance(m_rockPos.position, m_playerPos.position);
 
-        if (m_dist >= 5.0f)
-        {
-            //Destroy(gameObject);
-        }
+      
     }
 
 private void OnCollisionEnter(Collision collision)

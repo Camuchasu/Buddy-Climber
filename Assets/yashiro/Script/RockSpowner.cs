@@ -28,4 +28,9 @@ public class RockSpowner : MonoBehaviour
 
     Instantiate(prefab, spawnPos, Quaternion.identity);
 }
+
+ void OnDisable()
+    {
+        CancelInvoke();
+    }
 }
