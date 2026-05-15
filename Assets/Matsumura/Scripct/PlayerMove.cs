@@ -1,10 +1,11 @@
 using UnityEngine;
 
 public class PlayerMove : MonoBehaviour
-{
+{   
     [Header("Model Settings")]
     public Transform modelTransform;
     public float rotationSpeed = 720f;
+    public float modelRotationOffset = 90f;
 
     [Header("Movement Settings")]
     public float moveSpeed = 5f;
@@ -98,17 +99,21 @@ public class PlayerMove : MonoBehaviour
 
     void HandleModelRotation()
     {
-        if (moveInput != Vector3.zero && modelTransform != null)
+        // 入力がある時だけ、モデル（子）をその方向に向かせる
+        if (moveInput.magnitude > 0.1f && modelTransform != null)
         {
-            Quaternion targetRotation =
-                Quaternion.LookRotation(moveInput);
-
-            modelTransform.rotation =
-                Quaternion.RotateTowards(
-                    modelTransform.rotation,
-                    targetRotation,
-                    rotationSpeed * Time.deltaTime
-                );
+            // 1. 入力方向に基づいたターゲットの回転を作成
+            Quaternion targetRotation = Quaternion.LookRotation(moveInput);
+            
+            // 2. モデルの向きのズレを補正（Y軸を90度などオフセット）
+            targetRotation *= Quaternion.Euler(0, modelRotationOffset, 0);
+            
+            // 3. 現在の回転から目標の回転へスムーズに回す
+            modelTransform.rotation = Quaternion.RotateTowards(
+                modelTransform.rotation,
+                targetRotation,
+                rotationSpeed * Time.deltaTime
+            );
         }
     }
 
