@@ -3,19 +3,35 @@ using UnityEngine;
 
 public class WindSystem : MonoBehaviour
 {
-    public ParticleSystem windEffect;
+    [Header("風エフェクト")]
+    [SerializeField] private ParticleSystem windEffect;
 
-    public float minInterval = 3f;
-    public float maxInterval = 8f;
-    public float windDuration = 2f;
+    [Header("風の時間")]
+    [SerializeField] private float minInterval = 3f;
+    [SerializeField] private float maxInterval = 8f;
+    [SerializeField] private float windDuration = 2f;
 
-    [Header("風")]
-    public Vector3 windDirection = new Vector3(1, 0, 0);
-    public float windPower = 10f;
+    [Header("風向き")]
+    [SerializeField]
+    public Vector3 windDirection =
+        Vector3.left;
 
-    public bool IsBlowing => isBlowing; // 外から読めるように
+    [Header("風の強さ")]
+    [SerializeField]
+    public float windPower = 5f;
+
+    [Header("風範囲")]
+    [SerializeField]
+    private Vector3 boxSize =
+        new Vector3(30f, 30f, 30f);
+
+    [Header("追従対象")]
+    [SerializeField]
+    private Transform player;
 
     private bool isBlowing = false;
+
+    public bool IsBlowing => isBlowing;
 
     void Start()
     {
@@ -24,13 +40,65 @@ public class WindSystem : MonoBehaviour
 
     void Update()
     {
+        // プレイヤーに追従
+        if (player != null)
+        {
+            transform.position = player.position;
+        }
+
+        // 風エフェクト
         if (isBlowing)
         {
-            if (!windEffect.isPlaying) windEffect.Play();
+            if (!windEffect.isPlaying)
+            {
+                windEffect.Play();
+            }
         }
         else
         {
-            if (windEffect.isPlaying) windEffect.Stop();
+            if (windEffect.isPlaying)
+            {
+                windEffect.Stop();
+            }
+        }
+
+        // 風範囲内の足場取得
+        Collider[] hits = Physics.OverlapBox(
+            transform.position,
+            boxSize / 2
+        );
+
+        foreach (Collider hit in hits)
+        {
+            if (hit.CompareTag("Floor"))
+            {
+                Rigidbody rb =
+                    hit.GetComponent<Rigidbody>();
+
+                if (rb != null)
+                {
+                    // Sleep防止
+                    rb.sleepThreshold = 0;
+
+                    Vector3 velocity =
+                        rb.linearVelocity;
+
+                    if (isBlowing)
+                    {
+                        rb.WakeUp();
+
+                        velocity.x =
+                            windDirection.normalized.x
+                            * windPower;
+                    }
+                    else
+                    {
+                        velocity.x = 0f;
+                    }
+
+                    rb.linearVelocity = velocity;
+                }
+            }
         }
     }
 
@@ -38,10 +106,30 @@ public class WindSystem : MonoBehaviour
     {
         while (true)
         {
-            yield return new WaitForSeconds(Random.Range(minInterval, maxInterval));
+            yield return new WaitForSeconds(
+                Random.Range(
+                    minInterval,
+                    maxInterval
+                )
+            );
+
             isBlowing = true;
-            yield return new WaitForSeconds(windDuration);
+
+            yield return new WaitForSeconds(
+                windDuration
+            );
+
             isBlowing = false;
         }
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.cyan;
+
+        Gizmos.DrawWireCube(
+            transform.position,
+            boxSize
+        );
     }
 }
