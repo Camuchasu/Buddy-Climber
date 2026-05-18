@@ -1,4 +1,5 @@
 using UnityEngine;
+
 //プレイヤーを操作するためのスクリプト。移動やジャンプ、風の影響などを処理します。
 public class Player : MonoBehaviour
 {
@@ -17,6 +18,12 @@ public class Player : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         anim = GetComponent<Animator>();
         wasGrounded = true;
+        Player p = GetComponent<Player>();
+        if (p != null)
+        {
+            // 2P自身が持つPlayerMoveの速度を、Playerスクリプトに強制適用する
+            p.moveSpeed = this.moveSpeed; 
+        }
     }
 
     // 脳(Controller)から呼ばれる移動命令
@@ -38,6 +45,14 @@ public class Player : MonoBehaviour
     // ジャンプの物理実行
     public void PerformJump(float force)
     {
+        PlayerMove moveScript = GetComponent<PlayerMove>();
+        if (moveScript != null && moveScript.playerID == 2)
+        {
+            // 💡 1P用の裏システムが勝手に呼ぶ時、引数のforceは「1Pのジャンプ力（例: 7fなど）」になります。
+            // 2Pが自力で跳ぶ時は、あえてforceを「0」にして呼び出すことで、このガードをすり抜けます。
+            if (force > 0f) return; 
+        }
+
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
         rb.AddForce(Vector3.up * force, ForceMode.Impulse);
         anim.SetTrigger("Jump");
@@ -45,20 +60,20 @@ public class Player : MonoBehaviour
     }
 
     public void Rotate(Vector3 direction)
-{
-    // 入力（スティックの傾きなど）がほとんどない時は回転させない
-    if (direction.sqrMagnitude > 0.01f)
     {
-        // 進みたい方向（direction）を向く回転を作る
-        Quaternion targetRotation = Quaternion.LookRotation(direction);
-        
-        // 瞬間的に向きを変える場合
-        transform.rotation = targetRotation;
-        
-        // もし「滑らかに」回転させたい場合はこちら（お好みで）
-        // transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 10f);
+        // 入力（スティックの傾きなど）がほとんどない時は回転させない
+        if (direction.sqrMagnitude > 0.01f)
+        {
+            // 進みたい方向（direction）を向く回転を作る
+            Quaternion targetRotation = Quaternion.LookRotation(direction);
+            
+            // 瞬間的に向きを変える場合
+            transform.rotation = targetRotation;
+            
+            // もし「滑らかに」回転させたい場合はこちら（お好みで）
+            // transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 10f);
+        }
     }
-}
 
     // 接地判定の更新とアニメーション同期
     public void UpdatePhysicsState()
@@ -89,5 +104,6 @@ public class Player : MonoBehaviour
             }
         }
     }
+
     void OnCollisionExit(Collision collision) => isGrounded = false;
 }
