@@ -2,54 +2,57 @@ using UnityEngine;
 
 public class Hook : MonoBehaviour
 {
-    [Header("ƒvƒŒƒCƒ„[Ý’è")]
+   // [Header("ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½Ý’ï¿½")]
     public Rigidbody rb;
 
-    [Header("Œ©‚½–Úƒ‚ƒfƒ‹")]
+   // [Header("ï¿½ï¿½ï¿½ï¿½ï¿½Úƒï¿½ï¿½fï¿½ï¿½")]
     public Transform modelTransform;
 
-    [Header("ƒ‰ƒCƒ“•\Ž¦")]
+    //[Header("ï¿½tï¿½bï¿½Nï¿½ï¿½ï¿½ËˆÊ’u")]
+    public Transform hookOrigin;
+
+   // [Header("ï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½\ï¿½ï¿½")]
     public LineRenderer lineRenderer;
 
-    [Header("ƒtƒbƒN‰Â”\ƒŒƒCƒ„[")]
+   // [Header("ï¿½tï¿½bï¿½Nï¿½Â”\ï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[")]
     public LayerMask grappleLayer;
 
-    [Header("Å‘å‹——£")]
+   // [Header("ï¿½Å‘å‹—ï¿½ï¿½")]
     public float maxDistance = 20f;
 
-    [Header("ˆø‚Á’£‚é‘¬“x")]
+   // [Header("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½é‘¬ï¿½x")]
     public float pullForce = 25f;
 
-    [Header("’âŽ~‹——£")]
+   // [Header("ï¿½ï¿½~ï¿½ï¿½ï¿½ï¿½")]
     public float stopDistance = 2f;
 
-    [Header("Šp“x•ÏX‘¬“x")]
+   // [Header("ï¿½pï¿½xï¿½ÏXï¿½ï¿½ï¿½x")]
     public float rotateSpeed = 30f;
 
-    [Header("Å‘åŠp“x")]
+   // [Header("ï¿½Å‘ï¿½pï¿½x")]
     public float angleRange = 60f;
 
-    // ƒtƒbƒN’†
+    // ï¿½tï¿½bï¿½Nï¿½ï¿½
     private bool isGrappling = false;
 
-    // ‘_‚¢’†
+    // ï¿½_ï¿½ï¿½ï¿½ï¿½
     private bool isCharging = false;
 
-    // Œ»ÝŠp“x
+    // ï¿½ï¿½ï¿½ÝŠpï¿½x
     private float currentAngle = 0f;
 
-    // Šp“x‚Ìis•ûŒü
+    // ï¿½pï¿½xï¿½Ìiï¿½sï¿½ï¿½ï¿½ï¿½
     private bool angleForward = true;
 
-    // ƒtƒbƒN’n“_
+    // ï¿½tï¿½bï¿½Nï¿½nï¿½_
     private Vector3 grapplePoint;
 
     void Start()
     {
-        // Å‰‚ÍŽæ“¾‚µ‚Ä‚¢‚È‚¢ó‘Ô
-        enabled = false;
+        // ï¿½Åï¿½ï¿½ÍŽæ“¾ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½È‚ï¿½ï¿½ï¿½ï¿½
+        //enabled = false;
 
-        // ƒ‰ƒCƒ“”ñ•\Ž¦
+        // ï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½ï¿½\ï¿½ï¿½
         if (lineRenderer != null)
         {
             lineRenderer.enabled = false;
@@ -60,20 +63,20 @@ public class Hook : MonoBehaviour
     {
         HandleInput();
 
-        // ‘_‚¢’†
+        // ï¿½_ï¿½ï¿½ï¿½ï¿½
         if (isCharging)
         {
             RotateAim();
             DrawAimRay();
         }
 
-        // ƒtƒbƒN’†
+        // ï¿½tï¿½bï¿½Nï¿½ï¿½
         if (isGrappling)
         {
             DrawGrappleLine();
         }
 
-        // ”ñ•\Ž¦ˆ—
+        // ï¿½ï¿½\ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         if (!isCharging && !isGrappling)
         {
             if (lineRenderer != null)
@@ -93,19 +96,19 @@ public class Hook : MonoBehaviour
 
     void HandleInput()
     {
-        // E‰Ÿ‚µ‚½uŠÔ
+        // Eï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½uï¿½ï¿½
         if (Input.GetKeyDown(KeyCode.E))
         {
             isCharging = true;
 
-            // Šp“xƒŠƒZƒbƒg
+            // ï¿½pï¿½xï¿½ï¿½ï¿½Zï¿½bï¿½g
             currentAngle = 0f;
 
-            // Å‰‚Íã•ûŒü
+            // ï¿½Åï¿½ï¿½Íï¿½ï¿½ï¿½ï¿½
             angleForward = true;
         }
 
-        // E—£‚µ‚½uŠÔ
+        // Eï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½uï¿½ï¿½
         if (Input.GetKeyUp(KeyCode.E))
         {
             isCharging = false;
@@ -116,12 +119,12 @@ public class Hook : MonoBehaviour
 
     void RotateAim()
     {
-        // ã•ûŒü
+        // ï¿½ï¿½ï¿½ï¿½ï¿½
         if (angleForward)
         {
             currentAngle += rotateSpeed * Time.deltaTime;
 
-            // Å‘åŠp“x
+            // ï¿½Å‘ï¿½pï¿½x
             if (currentAngle >= angleRange)
             {
                 currentAngle = angleRange;
@@ -129,12 +132,12 @@ public class Hook : MonoBehaviour
                 angleForward = false;
             }
         }
-        // ‰º•ûŒü
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         else
         {
             currentAngle -= rotateSpeed * Time.deltaTime;
 
-            // 0‚Ü‚Å–ß‚Á‚½
+            // 0ï¿½Ü‚Å–ß‚ï¿½ï¿½ï¿½
             if (currentAngle <= 0f)
             {
                 currentAngle = 0f;
@@ -149,7 +152,7 @@ public class Hook : MonoBehaviour
         if (lineRenderer == null || modelTransform == null)
             return;
 
-        // ƒvƒŒƒCƒ„[Šî€‚Åã•ûŒü‰ñ“]
+        // ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½î€ï¿½Åï¿½ï¿½ï¿½ï¿½ï¿½ï¿½]
         Vector3 direction =
             Quaternion.AngleAxis(
                 -currentAngle,
@@ -157,17 +160,17 @@ public class Hook : MonoBehaviour
             ) * modelTransform.forward;
 
         Vector3 endPoint =
-            transform.position + direction * maxDistance;
+        hookOrigin.position + direction * maxDistance;
 
-        // ƒ‰ƒCƒ“•\Ž¦
+        // ï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½\ï¿½ï¿½
         lineRenderer.enabled = true;
 
-        lineRenderer.SetPosition(0, transform.position);
+        lineRenderer.SetPosition(0, hookOrigin.position);
         lineRenderer.SetPosition(1, endPoint);
 
-        // Sceneƒrƒ…[—p
+        // Sceneï¿½rï¿½ï¿½ï¿½[ï¿½p
         Debug.DrawRay(
-            transform.position,
+        hookOrigin.position,
             direction * maxDistance,
             Color.red
         );
@@ -178,7 +181,7 @@ public class Hook : MonoBehaviour
         if (modelTransform == null)
             return;
 
-        // ƒvƒŒƒCƒ„[Šî€‚Åã•ûŒü‰ñ“]
+        // ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½î€ï¿½Åï¿½ï¿½ï¿½ï¿½ï¿½ï¿½]
         Vector3 direction =
             Quaternion.AngleAxis(
                 -currentAngle,
@@ -188,7 +191,7 @@ public class Hook : MonoBehaviour
         RaycastHit hit;
 
         if (Physics.Raycast(
-            transform.position,
+            hookOrigin.position,
             direction,
             out hit,
             maxDistance,
@@ -198,11 +201,11 @@ public class Hook : MonoBehaviour
 
             isGrappling = true;
 
-            Debug.Log("ƒtƒbƒN¬Œ÷");
+           // Debug.Log("ï¿½tï¿½bï¿½Nï¿½ï¿½ï¿½ï¿½");
         }
         else
         {
-            Debug.Log("ˆø‚ÁŠ|‚©‚éêŠ‚ª‚È‚¢");
+           // Debug.Log("ï¿½ï¿½ï¿½ï¿½ï¿½|ï¿½ï¿½ï¿½ï¿½êŠï¿½ï¿½ï¿½È‚ï¿½");
         }
     }
 
@@ -211,13 +214,11 @@ public class Hook : MonoBehaviour
         Vector3 direction =
             (grapplePoint - transform.position).normalized;
 
-        // ƒvƒŒƒCƒ„[ˆÚ“®
-        rb.linearVelocity = direction * pullForce;
+        rb.AddForce(direction * pullForce, ForceMode.Acceleration);
 
         float distance =
             Vector3.Distance(transform.position, grapplePoint);
 
-        // “ž’B‚µ‚½‚çI—¹
         if (distance < stopDistance)
         {
             StopGrapple();
@@ -231,7 +232,7 @@ public class Hook : MonoBehaviour
 
         lineRenderer.enabled = true;
 
-        lineRenderer.SetPosition(0, transform.position);
+        lineRenderer.SetPosition(0, hookOrigin.position);
         lineRenderer.SetPosition(1, grapplePoint);
     }
 
