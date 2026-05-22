@@ -47,6 +47,8 @@ public class Hook : MonoBehaviour
     // �t�b�N�n�_
     private Vector3 grapplePoint;
 
+    private SpringJoint joint;
+
     void Start()
     {
         // �ŏ��͎擾���Ă��Ȃ����
@@ -88,32 +90,32 @@ public class Hook : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (isGrappling)
-        {
-            PullPlayer();
-        }
     }
 
     void HandleInput()
     {
-        // E�������u��
+        // E押した瞬間
         if (Input.GetKeyDown(KeyCode.E))
         {
             isCharging = true;
 
-            // �p�x���Z�b�g
             currentAngle = 0f;
 
-            // �ŏ��͏����
             angleForward = true;
         }
 
-        // E�������u��
+        // E離した瞬間
         if (Input.GetKeyUp(KeyCode.E))
         {
             isCharging = false;
 
             TryGrapple();
+        }
+
+        // Spaceで解除
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            StopGrapple();
         }
     }
 
@@ -178,10 +180,13 @@ public class Hook : MonoBehaviour
 
     void TryGrapple()
     {
+        if (joint != null)
+        {
+            Destroy(joint);
+        }
         if (modelTransform == null)
             return;
 
-        // �v���C���[��ŏ������]
         Vector3 direction =
             Quaternion.AngleAxis(
                 -currentAngle,
@@ -201,29 +206,39 @@ public class Hook : MonoBehaviour
 
             isGrappling = true;
 
-           // Debug.Log("�t�b�N����");
+            // 少し前へ勢いをつける
+            rb.AddForce(
+                direction * 5f,
+                ForceMode.VelocityChange
+            );
+
+            joint = rb.gameObject.AddComponent<SpringJoint>();
+
+            joint.autoConfigureConnectedAnchor = false;
+            joint.connectedAnchor = grapplePoint;
+
+            float distance =
+                Vector3.Distance(
+                    transform.position,
+                    grapplePoint
+                );
+
+            joint.maxDistance = distance;
+            joint.minDistance = distance * 0.8f;
+
+            joint.spring = 0.5f;
+            joint.damper = 0.1f;
+            joint.massScale = 1f;
+
+            Debug.Log("フック成功");
         }
         else
         {
-           // Debug.Log("�����|����ꏊ���Ȃ�");
+            Debug.Log("引っ掛かる場所がない");
         }
     }
 
-    void PullPlayer()
-    {
-        Vector3 direction =
-            (grapplePoint - transform.position).normalized;
 
-        rb.AddForce(direction * pullForce, ForceMode.Acceleration);
-
-        float distance =
-            Vector3.Distance(transform.position, grapplePoint);
-
-        if (distance < stopDistance)
-        {
-            StopGrapple();
-        }
-    }
 
     void DrawGrappleLine()
     {
@@ -240,11 +255,19 @@ public class Hook : MonoBehaviour
     {
         isGrappling = false;
 
-        rb.linearVelocity = Vector3.zero;
+        if (joint != null)
+        {
+            Destroy(joint);
+        }
 
         if (lineRenderer != null)
         {
             lineRenderer.enabled = false;
         }
+    }
+
+    public bool IsGrappling()
+    {
+        return isGrappling;
     }
 }

@@ -29,9 +29,21 @@ public class Player : MonoBehaviour
     // 脳(Controller)から呼ばれる移動命令
     public void PerformMove(float h, float v)
     {
-        Vector3 move = transform.forward * v + transform.right * h;
+        Hook hook = GetComponentInChildren<Hook>();
+
+        if (hook != null && hook.IsGrappling())
+        {
+            return;
+        }
+
+        Vector3 move =
+            transform.forward * v +
+            transform.right * h;
+
         Vector3 velocity = move * moveSpeed;
+
         velocity.y = rb.linearVelocity.y;
+
         rb.linearVelocity = velocity;
     }
 
