@@ -2,59 +2,56 @@ using UnityEngine;
 
 public class Hook : MonoBehaviour
 {
-   // [Header("�v���C���[�ݒ�")]
+    [Header("プレイヤー")]
     public Rigidbody rb;
 
-   // [Header("�����ڃ��f��")]
+    [Header("プレイヤーモデル")]
     public Transform modelTransform;
 
-    //[Header("�t�b�N���ˈʒu")]
+    [Header("フック発射位置")]
     public Transform hookOrigin;
 
-   // [Header("���C���\��")]
+    [Header("ロープ表示")]
     public LineRenderer lineRenderer;
 
-   // [Header("�t�b�N�\���C���[")]
+    [Header("フック可能レイヤー")]
     public LayerMask grappleLayer;
 
-   // [Header("�ő勗��")]
+    [Header("最大距離")]
     public float maxDistance = 20f;
 
-   // [Header("�������鑬�x")]
-    public float pullForce = 25f;
+    [Header("エイム回転速度")]
+    public float rotateSpeed = 60f;
 
-   // [Header("��~����")]
-    public float stopDistance = 2f;
-
-   // [Header("�p�x�ύX���x")]
-    public float rotateSpeed = 30f;
-
-   // [Header("�ő�p�x")]
+    [Header("エイム角度範囲")]
     public float angleRange = 60f;
 
-    // �t�b�N��
+    [Header("ロープの強さ")]
+    public float springPower = 20f;
+
+    [Header("ロープの減衰")]
+    public float damperPower = 5f;
+
+    // フック中
     private bool isGrappling = false;
 
-    // �_����
+    // エイム中
     private bool isCharging = false;
 
-    // ���݊p�x
+    // 現在角度
     private float currentAngle = 0f;
 
-    // �p�x�̐i�s����
+    // 往復用
     private bool angleForward = true;
 
-    // �t�b�N�n�_
+    // フック地点
     private Vector3 grapplePoint;
 
+    // Joint
     private SpringJoint joint;
 
     void Start()
     {
-        // �ŏ��͎擾���Ă��Ȃ����
-        //enabled = false;
-
-        // ���C����\��
         if (lineRenderer != null)
         {
             lineRenderer.enabled = false;
@@ -65,20 +62,20 @@ public class Hook : MonoBehaviour
     {
         HandleInput();
 
-        // �_����
+        // エイム中
         if (isCharging)
         {
             RotateAim();
             DrawAimRay();
         }
 
-        // �t�b�N��
+        // フック中
         if (isGrappling)
         {
             DrawGrappleLine();
         }
 
-        // ��\������
+        // 非表示
         if (!isCharging && !isGrappling)
         {
             if (lineRenderer != null)
@@ -88,28 +85,28 @@ public class Hook : MonoBehaviour
         }
     }
 
-    void FixedUpdate()
-    {
-    }
-
     void HandleInput()
     {
-        // E押した瞬間
-        if (Input.GetKeyDown(KeyCode.E))
+        // フック中はE無効
+        if (!isGrappling)
         {
-            isCharging = true;
+            // E押した瞬間
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                isCharging = true;
 
-            currentAngle = 0f;
+                currentAngle = 0f;
 
-            angleForward = true;
-        }
+                angleForward = true;
+            }
 
-        // E離した瞬間
-        if (Input.GetKeyUp(KeyCode.E))
-        {
-            isCharging = false;
+            // E離した瞬間
+            if (Input.GetKeyUp(KeyCode.E))
+            {
+                isCharging = false;
 
-            TryGrapple();
+                TryGrapple();
+            }
         }
 
         // Spaceで解除
@@ -121,12 +118,10 @@ public class Hook : MonoBehaviour
 
     void RotateAim()
     {
-        // �����
         if (angleForward)
         {
             currentAngle += rotateSpeed * Time.deltaTime;
 
-            // �ő�p�x
             if (currentAngle >= angleRange)
             {
                 currentAngle = angleRange;
@@ -134,12 +129,10 @@ public class Hook : MonoBehaviour
                 angleForward = false;
             }
         }
-        // ������
         else
         {
             currentAngle -= rotateSpeed * Time.deltaTime;
 
-            // 0�܂Ŗ߂���
             if (currentAngle <= 0f)
             {
                 currentAngle = 0f;
@@ -154,7 +147,6 @@ public class Hook : MonoBehaviour
         if (lineRenderer == null || modelTransform == null)
             return;
 
-        // �v���C���[��ŏ������]
         Vector3 direction =
             Quaternion.AngleAxis(
                 -currentAngle,
@@ -162,17 +154,15 @@ public class Hook : MonoBehaviour
             ) * modelTransform.forward;
 
         Vector3 endPoint =
-        hookOrigin.position + direction * maxDistance;
+            hookOrigin.position + direction * maxDistance;
 
-        // ���C���\��
         lineRenderer.enabled = true;
 
         lineRenderer.SetPosition(0, hookOrigin.position);
         lineRenderer.SetPosition(1, endPoint);
 
-        // Scene�r���[�p
         Debug.DrawRay(
-        hookOrigin.position,
+            hookOrigin.position,
             direction * maxDistance,
             Color.red
         );
@@ -180,10 +170,12 @@ public class Hook : MonoBehaviour
 
     void TryGrapple()
     {
+        // 古いJoint削除
         if (joint != null)
         {
             Destroy(joint);
         }
+
         if (modelTransform == null)
             return;
 
@@ -195,6 +187,7 @@ public class Hook : MonoBehaviour
 
         RaycastHit hit;
 
+        // レイキャスト
         if (Physics.Raycast(
             hookOrigin.position,
             direction,
@@ -206,28 +199,35 @@ public class Hook : MonoBehaviour
 
             isGrappling = true;
 
-            // 少し前へ勢いをつける
-            rb.AddForce(
-                direction * 5f,
-                ForceMode.VelocityChange
-            );
-
+            // Joint追加
             joint = rb.gameObject.AddComponent<SpringJoint>();
 
+            // ワールド座標使用
+            joint.connectedBody = null;
+
+            // 自動設定OFF
             joint.autoConfigureConnectedAnchor = false;
+
+            // プレイヤー中心
+            joint.anchor = Vector3.zero;
+
+            // フック地点
             joint.connectedAnchor = grapplePoint;
 
+            // Rigidbody基準距離
             float distance =
                 Vector3.Distance(
-                    transform.position,
+                    rb.position,
                     grapplePoint
                 );
 
-            joint.maxDistance = distance;
-            joint.minDistance = distance * 0.8f;
+            // ロープ長を短くして引っ張る
+            joint.maxDistance = distance * 0.5f;
+            joint.minDistance = 0f;
 
-            joint.spring = 0.5f;
-            joint.damper = 0.1f;
+            // 引っ張る力
+            joint.spring = springPower;
+            joint.damper = damperPower;
             joint.massScale = 1f;
 
             Debug.Log("フック成功");
@@ -237,8 +237,6 @@ public class Hook : MonoBehaviour
             Debug.Log("引っ掛かる場所がない");
         }
     }
-
-
 
     void DrawGrappleLine()
     {
@@ -255,11 +253,13 @@ public class Hook : MonoBehaviour
     {
         isGrappling = false;
 
+        // Joint削除
         if (joint != null)
         {
             Destroy(joint);
         }
 
+        // ロープ非表示
         if (lineRenderer != null)
         {
             lineRenderer.enabled = false;

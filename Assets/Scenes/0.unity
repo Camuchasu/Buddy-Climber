@@ -940,10 +940,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   maxDistance: 3000
-  pullForce: 20
-  stopDistance: 2
   rotateSpeed: 10
   angleRange: 45
+  springPower: 20
+  damperPower: 5
 --- !u!114 &1552221258
 MonoBehaviour:
   m_ObjectHideFlags: 0
