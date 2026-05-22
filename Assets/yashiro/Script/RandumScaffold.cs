@@ -67,7 +67,7 @@ public class RandumScaffold : MonoBehaviour
 
             // 初期生成の高さもランダム
             highestY +=
-                Random.Range(3f, 7f);
+                Random.Range(2f, 4f);
         }
     }
 
@@ -85,7 +85,7 @@ public class RandumScaffold : MonoBehaviour
 
             // 毎回ランダムな高さ差
             highestY +=
-                Random.Range(2f, 6f);
+                Random.Range(2f, 4f);
         }
     }
 
