@@ -3,10 +3,12 @@ using UnityEngine;
 public class StageFollow : MonoBehaviour
 {
     [SerializeField] private Transform player;
-
     [SerializeField] private float borderY = 3f;
 
     private Vector3 startPos;
+
+    // 追加
+    public float ScrollAmount { get; private set; }
 
     void Start()
     {
@@ -22,18 +24,9 @@ public class StageFollow : MonoBehaviour
             offset = 0;
         }
 
-        transform.position =
-            startPos + Vector3.down * offset;
+        // 追加
+        ScrollAmount = offset;
 
-           // Debug.Log(player.position.y);
+        transform.position = startPos + Vector3.down * offset;
     }
-
-    GameObject floor = Instantiate(
-    prefabToSpawn,
-    pos,
-    Quaternion.identity,
-    transform
-    );
-
-    Debug.Log($"生成床Y={floor.transform.position.y}");
 }

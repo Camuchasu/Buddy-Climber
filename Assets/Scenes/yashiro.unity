@@ -324,7 +324,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prefab: {fileID: 8425967445156234642, guid: ad075184337984145957b0dc89e8e277, type: 3}
-  zPosition: -18.7
+  zPosition: -19.5
   yOffset: 5
 --- !u!4 &24280141
 Transform:
@@ -335,7 +335,7 @@ Transform:
   m_GameObject: {fileID: 24280139}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -3.2020302, y: 14.877453, z: 144.30444}
+  m_LocalPosition: {x: -3.2020302, y: 14.877453, z: 137.3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -648,7 +648,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &338127048
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -669,6 +669,7 @@ MonoBehaviour:
   windPower: 1
   boxSize: {x: 30, y: 30, z: 30}
   player: {fileID: 1152335118}
+  CanBlow: 0
 --- !u!4 &338127049
 Transform:
   m_ObjectHideFlags: 0
@@ -888,7 +889,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &652571752
 Transform:
   m_ObjectHideFlags: 0
@@ -5734,8 +5735,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 1152335118}
-  windStart: 26
-  windEnd: 48.62
+  windStart: 55
+  windEnd: 83
+  wind: {fileID: 338127048}
   rockStart: -18
   rockEnd: 5
   windSystem: {fileID: 338127047}
@@ -5971,7 +5973,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1024476964}
-  - component: {fileID: 1024476963}
   m_Layer: 0
   m_Name: StageRoot
   m_TagString: Untagged
@@ -5979,20 +5980,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1024476963
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1024476962}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eaa828c94df022443a8b1c680c0f747d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  player: {fileID: 1152335118}
-  borderY: 3
 --- !u!4 &1024476964
 Transform:
   m_ObjectHideFlags: 0
@@ -6559,7 +6546,7 @@ Transform:
   m_GameObject: {fileID: 1626701732}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.7071068, z: -0.7071068, w: 0}
-  m_LocalPosition: {x: -3.73, y: 32.44, z: 135.64}
+  m_LocalPosition: {x: -3.73, y: 32.44, z: 134.91}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -11563,14 +11550,14 @@ MonoBehaviour:
   xRange: 10
   startCount: 30
   spawnOffsetY: 25
-  goalY: 63
-  minDistance: 5
+  goalY: 95
+  minDistance: 8
   collapsingHeight: 31
-  collapsingEndHeight: 47.5
+  collapsingEndHeight: 54
   iceHeight: 5.1
   iceEndHeight: 34
-  cloudHeight: 47.5
-  cloudEndHeight: 63
+  cloudHeight: 55
+  cloudEndHeight: 95
 --- !u!1 &1751535694
 GameObject:
   m_ObjectHideFlags: 0

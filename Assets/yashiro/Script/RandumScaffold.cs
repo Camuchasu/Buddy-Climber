@@ -44,6 +44,7 @@ public class RandumScaffold : MonoBehaviour
 
     [SerializeField] private float cloudEndHeight = 200f;
 
+
     private float highestY;
 
     void Start()
@@ -74,26 +75,14 @@ public class RandumScaffold : MonoBehaviour
     void Update()
     {
         while (
-            highestY <
-            player.position.y +
-            spawnOffsetY
-            &&
+            highestY < player.position.y + spawnOffsetY &&
             highestY < goalY
         )
         {
             SpawnFloor(highestY);
 
-            // 毎回ランダムな高さ差
-            highestY +=
-                Random.Range(2f, 4f);
+            highestY += Random.Range(2f, 4f);
         }
-
-       // Debug.Log(highestY);
-
-       Debug.Log
-        (
-            $"highest={highestY}  StageY={transform.root.position.y}  PlayerY={player.position.y}"
-        );
     }
 
     void SpawnFloor(float y)

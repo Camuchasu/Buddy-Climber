@@ -33,6 +33,8 @@ public class WindSystem : MonoBehaviour
 
     public bool IsBlowing => isBlowing;
 
+    public bool CanBlow = false;
+
     void Start()
     {
         StartCoroutine(WindRoutine());
@@ -62,66 +64,29 @@ public class WindSystem : MonoBehaviour
             }
         }
 
-        // 風範囲内の足場取得
-        Collider[] hits = Physics.OverlapBox(
-            transform.position,
-            boxSize / 2
-        );
-
-        foreach (Collider hit in hits)
-        {
-            if (hit.CompareTag("Floor"))
-            {
-                Rigidbody rb =
-                    hit.GetComponent<Rigidbody>();
-
-                if (rb != null)
-                {
-                    // Sleep防止
-                    rb.sleepThreshold = 0;
-
-                    Vector3 velocity =
-                        rb.linearVelocity;
-
-                    if (isBlowing)
-                    {
-                        rb.WakeUp();
-
-                        velocity.x =
-                            windDirection.normalized.x
-                            * windPower;
-                    }
-                    else
-                    {
-                        velocity.x = 0f;
-                    }
-
-                    rb.linearVelocity = velocity;
-                }
-            }
-        }
+        
     }
 
     IEnumerator WindRoutine()
     {
-        while (true)
+    while (true)
+    {
+        if (!CanBlow)
         {
-            yield return new WaitForSeconds(
-                Random.Range(
-                    minInterval,
-                    maxInterval
-                )
-            );
-
-            isBlowing = true;
-
-            yield return new WaitForSeconds(
-                windDuration
-            );
-
             isBlowing = false;
+            yield return null;
+            continue;
         }
+
+        yield return new WaitForSeconds(Random.Range(minInterval, maxInterval));
+
+        isBlowing = true;
+
+        yield return new WaitForSeconds(windDuration);
+
+        isBlowing = false;
     }
+}
 
     private void OnDrawGizmos()
     {

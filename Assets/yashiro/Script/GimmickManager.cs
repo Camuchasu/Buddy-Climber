@@ -7,6 +7,7 @@ public class GimmickManager : MonoBehaviour
     [Header("風")]
     [SerializeField] private float windStart = 40f;
     [SerializeField] private float windEnd = 60f;
+    [SerializeField] private WindSystem wind;
 
     [Header("岩")]
     [SerializeField] private float rockStart = 60f;
@@ -22,16 +23,14 @@ public class GimmickManager : MonoBehaviour
         float y = player.position.y;
 
         // 風
-        if (y >= windStart && y < windEnd)
-        {
-            windSystem.SetActive(true);
-            windEffect.SetActive(true);
-        }
-        else
-        {
-            windSystem.SetActive(false);
-            windEffect.SetActive(false);
-        }
+ if (y >= windStart && y < windEnd)
+{
+    wind.CanBlow = true;
+}
+else
+{
+    wind.CanBlow = false;
+}
 
         // 岩
         if (y >= rockStart && y < rockEnd)
