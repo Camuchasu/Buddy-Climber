@@ -8,9 +8,21 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/SampleScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/0.unity
     guid: fda02ba0ff98e3e4ba077ecd2fea45e8
+  - enabled: 0
+    path: Assets/Scenes/ookatsu.unity
+    guid: 4d6086f4d8ac7624cbcbd76c1d6c5e5e
+  - enabled: 1
+    path: Assets/Scenes/Title.unity
+    guid: 9fea761e33ede8043b104b9d34b3de8c
+  - enabled: 1
+    path: Assets/Scenes/BuddyClimer.unity
+    guid: 50954fcc0aa809d4a9d3677209b64071
+  - enabled: 1
+    path: Assets/Scenes/Clear.unity
+    guid: 93fd34b2fd45b0744989b6fa3f8e65c6
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

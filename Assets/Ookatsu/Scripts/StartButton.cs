@@ -9,12 +9,12 @@ public class StartButton : MonoBehaviour
     {
         Button button = GetComponent<Button>();
 
-        //ƒ{ƒ^ƒ“‚ğ‰Ÿ‰º‚µ‚½‚ÌƒŠƒXƒi[‚ğİ’è‚·‚é
+        //ï¿½{ï¿½^ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ìƒï¿½ï¿½Xï¿½iï¿½[ï¿½ï¿½İ’è‚·ï¿½ï¿½
         button.onClick.AddListener(() =>
         {
-            //ƒV[ƒ“‘JˆÚ‚ÌÛ‚É‚ÍSceneManager‚ğg—p‚·‚é
+            //ï¿½Vï¿½[ï¿½ï¿½ï¿½Jï¿½Ú‚ÌÛ‚É‚ï¿½SceneManagerï¿½ï¿½ï¿½gï¿½pï¿½ï¿½ï¿½ï¿½
             //SceneManager.LoadScene("MainScene");
-            SceneManager.LoadScene("0");
+            SceneManager.LoadScene("BuddyClimer");
         });
     }
 }

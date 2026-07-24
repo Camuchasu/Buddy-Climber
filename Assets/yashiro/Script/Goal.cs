@@ -3,13 +3,13 @@ using UnityEngine.SceneManagement;
 
 public class Goal : MonoBehaviour
 {
-    [SerializeField] private string titleSceneName = "Title"; // タイトルシーン名
+    [SerializeField] string clearSceneName;
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player")) // プレイヤーだけ反応
+        if(other.CompareTag("Player"))
         {
-            SceneManager.LoadScene(titleSceneName);
+            SceneManager.LoadScene(clearSceneName);
         }
     }
 }

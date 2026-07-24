@@ -123,6 +123,11 @@ public class PlayerMove : MonoBehaviour
 
     void ApplyMovement()
     {
+            if (Input.GetKey(KeyCode.E))
+    {
+        rb.linearVelocity = new Vector3(0, rb.linearVelocity.y, 0);
+        return;
+    }
         if (isOnIce)
         {
             rb.AddForce(moveInput * moveSpeed, ForceMode.Acceleration);
@@ -135,20 +140,24 @@ public class PlayerMove : MonoBehaviour
         }
     }
 
-    void HandleModelRotation()
+void HandleModelRotation()
+{
+    if (Input.GetKey(KeyCode.E))
     {
-        if (moveInput.magnitude > 0.1f && modelTransform != null)
-        {
-            Quaternion targetRotation = Quaternion.LookRotation(moveInput);
-            targetRotation *= Quaternion.Euler(0, modelRotationOffset, 0);
-            
-            modelTransform.rotation = Quaternion.RotateTowards(
-                modelTransform.rotation,
-                targetRotation,
-                rotationSpeed * Time.deltaTime
-            );
-        }
+    if (moveInput.x > 0)
+    {
+        transform.rotation = Quaternion.Euler(0, 90, 0);
     }
+    else if (moveInput.x < 0)
+    {
+        transform.rotation = Quaternion.Euler(0, -90, 0);
+    }
+    else
+    {
+        transform.rotation = Quaternion.Euler(0, 0, 0);
+    }
+    }
+}
 
     private void OnCollisionStay(Collision collision)
     {
