@@ -24,5 +24,16 @@ public class StageFollow : MonoBehaviour
 
         transform.position =
             startPos + Vector3.down * offset;
+
+           // Debug.Log(player.position.y);
     }
+
+    GameObject floor = Instantiate(
+    prefabToSpawn,
+    pos,
+    Quaternion.identity,
+    transform
+    );
+
+    Debug.Log($"生成床Y={floor.transform.position.y}");
 }

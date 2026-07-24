@@ -87,6 +87,13 @@ public class RandumScaffold : MonoBehaviour
             highestY +=
                 Random.Range(2f, 4f);
         }
+
+       // Debug.Log(highestY);
+
+       Debug.Log
+        (
+            $"highest={highestY}  StageY={transform.root.position.y}  PlayerY={player.position.y}"
+        );
     }
 
     void SpawnFloor(float y)

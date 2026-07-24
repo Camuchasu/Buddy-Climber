@@ -13,6 +13,7 @@ public class RockSpowner : MonoBehaviour
 
  void Spawn()
 {
+    
     float spawnY = Camera.main.transform.position.y + yOffset;
 
     // カメラからその高さまでの距離
