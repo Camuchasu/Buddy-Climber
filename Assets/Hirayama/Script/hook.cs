@@ -32,6 +32,9 @@ public class Hook : MonoBehaviour
     [Header("ロープの減衰")]
     public float damperPower = 5f;
 
+    [Header("巻き取り速度")]
+    public float reelSpeed = 5f;
+
     // フック中
     private bool isGrappling = false;
 
@@ -62,26 +65,30 @@ public class Hook : MonoBehaviour
     {
         HandleInput();
 
-        // エイム中
         if (isCharging)
         {
             RotateAim();
             DrawAimRay();
         }
 
-        // フック中
         if (isGrappling)
         {
             DrawGrappleLine();
+
+            // 左Shiftを押している間ロープを巻き取る
+            if (Input.GetKey(KeyCode.LeftShift) && joint != null)
+            {
+                joint.maxDistance -= reelSpeed * Time.deltaTime;
+
+                // 最低1mまでは縮められる
+                joint.maxDistance = Mathf.Max(joint.maxDistance, 1f);
+            }
         }
 
-        // 非表示
         if (!isCharging && !isGrappling)
         {
             if (lineRenderer != null)
-            {
                 lineRenderer.enabled = false;
-            }
         }
     }
 

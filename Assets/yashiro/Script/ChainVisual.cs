@@ -13,6 +13,9 @@ public class ChainVisual : MonoBehaviour
     private Rigidbody rb1;
     private Rigidbody rb2;
 
+    [Header("ロープ巻き取り速度")]
+    public float reelSpeed = 2f;
+
 
     void Start()
     {
@@ -36,12 +39,24 @@ public class ChainVisual : MonoBehaviour
 
 
         // 一定距離以上離れたら引っ張る
-        if(distance > maxDistance)
+        if (distance > maxDistance)
         {
             Vector3 pullDir = direction.normalized;
 
-            rb1.AddForce(pullDir * pullForce);
-            rb2.AddForce(-pullDir * pullForce);
+            float stretch = distance - maxDistance;
+            float force = stretch * pullForce;
+
+            // Player1が巻き取り
+            if (Input.GetKey(KeyCode.V))
+            {
+                rb1.AddForce(pullDir * force, ForceMode.Force);
+            }
+
+            // Player2が巻き取り
+            if (Input.GetKey(KeyCode.Keypad0))
+            {
+                rb2.AddForce(-pullDir * force, ForceMode.Force);
+            }
         }
     }
 }

@@ -123,11 +123,11 @@ public class PlayerMove : MonoBehaviour
 
     void ApplyMovement()
     {
-            if (Input.GetKey(KeyCode.E))
-    {
-        rb.linearVelocity = new Vector3(0, rb.linearVelocity.y, 0);
-        return;
-    }
+        if (Input.GetKey(KeyCode.E))
+        {
+            rb.linearVelocity = new Vector3(0, rb.linearVelocity.y, 0);
+            return;
+        }
         if (isOnIce)
         {
             rb.AddForce(moveInput * moveSpeed, ForceMode.Acceleration);
@@ -209,7 +209,7 @@ void HandleModelRotation()
         {
             jumpForce = defaultJumpForce * 0.6f;
             rb.linearDamping = 0.05f;
-            rb.mass = 0.7f;
+            //rb.mass = 0.7f;
         }
         else
         {

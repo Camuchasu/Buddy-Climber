@@ -15,6 +15,9 @@ public class PlayerBase : CharaBase
     private float coyoteTimer;
     private float jumpBufferTimer;
 
+    [Header("ジャンプキー")]
+    public KeyCode jumpKey = KeyCode.Space;
+
     void Start()
     {
         wind = FindObjectOfType<WindSystem>();
@@ -60,11 +63,15 @@ public class PlayerBase : CharaBase
 
     void UpdateTimers()
     {
-        if (Input.GetKeyDown(KeyCode.Space)) jumpBufferTimer = jumpBufferTime;
-        else jumpBufferTimer -= Time.deltaTime;
+        if (Input.GetKeyDown(jumpKey))
+            jumpBufferTimer = jumpBufferTime;
+        else
+            jumpBufferTimer -= Time.deltaTime;
 
-        if (motor.isGrounded) coyoteTimer = coyoteTime;
-        else coyoteTimer -= Time.deltaTime;
-    }
+        if (motor.isGrounded)
+            coyoteTimer = coyoteTime;
+        else
+            coyoteTimer -= Time.deltaTime;
+}
 }
 

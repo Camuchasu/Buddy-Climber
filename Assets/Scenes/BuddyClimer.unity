@@ -848,6 +848,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &661695095 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5346491433526078825, guid: d5b4b9e82e6e45e4283c6435e743b647, type: 3}
+  m_PrefabInstance: {fileID: 957072441}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &957072441
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11491,6 +11496,7 @@ MonoBehaviour:
   jumpForce: 11
   coyoteTime: 0.3
   jumpBufferTime: 0.3
+  jumpKey: 32
 --- !u!114 &1650737605
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11607,11 +11613,11 @@ MonoBehaviour:
   grappleLayer:
     serializedVersion: 2
     m_Bits: 64
-  maxDistance: 20
-  rotateSpeed: 30
-  angleRange: 60
-  springPower: 50
-  damperPower: 5
+  maxDistance: 25
+  rotateSpeed: 60
+  angleRange: 70
+  springPower: 70
+  damperPower: 7
 --- !u!120 &1650737612
 LineRenderer:
   serializedVersion: 2
@@ -11719,11 +11725,6 @@ LineRenderer:
   m_UseWorldSpace: 1
   m_Loop: 0
   m_ApplyActiveColorSpace: 1
---- !u!4 &1664528382 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 5640509201236287458, guid: d5b4b9e82e6e45e4283c6435e743b647, type: 3}
-  m_PrefabInstance: {fileID: 957072441}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1676241080
 GameObject:
   m_ObjectHideFlags: 0
@@ -11995,6 +11996,7 @@ MonoBehaviour:
   jumpForce: 11
   coyoteTime: 0.3
   jumpBufferTime: 0.3
+  jumpKey: 305
 --- !u!114 &1741658539
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12008,13 +12010,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerID: 2
-  modelTransform: {fileID: 1664528382}
+  modelTransform: {fileID: 661695095}
   rotationSpeed: 10
-  modelRotationOffset: 90
-  moveSpeed: 10
+  modelRotationOffset: 0
+  moveSpeed: 5
   stepHeight: 0.8
   stepSmooth: 5
-  jumpForce: 11
+  jumpForce: 5
   jumpStaminaCost: 20
   groundLayer:
     serializedVersion: 2
@@ -12035,7 +12037,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rb: {fileID: 1741658541}
-  moveSpeed: 13
+  moveSpeed: 12
   airWindMultiplier: 1.5
 --- !u!54 &1741658541
 Rigidbody:
