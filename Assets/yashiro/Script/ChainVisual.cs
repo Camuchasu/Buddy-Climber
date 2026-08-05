@@ -1,20 +1,29 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class ChainVisual : MonoBehaviour
 {
     public Transform player1;
     public Transform player2;
 
-    public float pullForce = 10f;
+    [Header("鎖設定")]
     public float maxDistance = 3f;
+    public float minDistance = 1.5f;
+    public float pullForce = 10f;
+
+    [Header("巻き取り")]
+    public float reelSpeed = 2f;
 
     private LineRenderer line;
 
+    [SerializeField]
+    private InputActionReference player1ReelAction;
+
+    [SerializeField]
+    private InputActionReference player2ReelAction;
+
     private Rigidbody rb1;
     private Rigidbody rb2;
-
-    [Header("ロープ巻き取り速度")]
-    public float reelSpeed = 2f;
 
 
     void Start()
@@ -25,38 +34,64 @@ public class ChainVisual : MonoBehaviour
         rb2 = player2.GetComponent<Rigidbody>();
     }
 
+    void OnEnable()
+    {
+        player1ReelAction.action.Enable();
+        player2ReelAction.action.Enable();
+    }
+
+    void OnDisable()
+    {
+        player1ReelAction.action.Disable();
+        player2ReelAction.action.Disable();
+    }
+
+
+    void Update()
+    {
+        // 鎖表示
+        line.SetPosition(0, player1.position);
+        line.SetPosition(1, player2.position);
+    }
+
 
     void FixedUpdate()
     {
-        // 距離計算
         Vector3 direction = player2.position - player1.position;
         float distance = direction.magnitude;
 
 
-        // 線表示
-        line.SetPosition(0, player1.position);
-        line.SetPosition(1, player2.position);
+        // Player1 巻き取り
+        if (player1ReelAction.action.IsPressed())
+        {
+            maxDistance -= reelSpeed * Time.fixedDeltaTime;
+        }
 
 
-        // 一定距離以上離れたら引っ張る
+        // Player2 巻き取り
+       if (player2ReelAction.action.IsPressed())
+        {
+            maxDistance -= reelSpeed * Time.fixedDeltaTime;
+        }
+
+
+        // 鎖の長さ制限
+        maxDistance = Mathf.Clamp(maxDistance, minDistance, 5f);
+
+
+        // 一定距離以上なら引っ張る
         if (distance > maxDistance)
         {
             Vector3 pullDir = direction.normalized;
 
             float stretch = distance - maxDistance;
-            float force = stretch * pullForce;
 
-            // Player1が巻き取り
-            if (Input.GetKey(KeyCode.V))
-            {
-                rb1.AddForce(pullDir * force, ForceMode.Force);
-            }
+            float force = stretch * stretch * pullForce;
 
-            // Player2が巻き取り
-            if (Input.GetKey(KeyCode.Keypad0))
-            {
-                rb2.AddForce(-pullDir * force, ForceMode.Force);
-            }
+
+            // 両方を引き寄せる
+            rb1.AddForce(pullDir * force * 0.5f, ForceMode.Force);
+            rb2.AddForce(-pullDir * force * 0.5f, ForceMode.Force);
         }
     }
 }

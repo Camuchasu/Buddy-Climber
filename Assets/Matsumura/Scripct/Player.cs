@@ -1,32 +1,49 @@
 using UnityEngine;
 
-//プレイヤーを操作するためのスクリプト。移動やジャンプ、風の影響などを処理します。
 public class Player : MonoBehaviour
 {
-    public Rigidbody rb;
-    private Animator anim;
-
-    [Header("移動・重力設定")]
+    [Header("移動設定")]
     public float moveSpeed = 10f;
+
+    [Header("ジャンプ設定")]
+    public float jumpForce = 10f;
+
+    [Header("風設定")]
     public float airWindMultiplier = 1.5f;
 
-    public bool isGrounded { get; private set; }
-    private bool wasGrounded;
+    [Header("氷設定")]
+    public float iceMoveMultiplier = 0.6f;
+    public float iceDamping = 0.05f;
 
-    void Start()
+    private float defaultMoveSpeed;
+    private float defaultDamping;
+
+    private Rigidbody rb;
+    private Animator anim;
+
+    public bool isGrounded { get; private set; }
+
+    private bool wasGrounded;
+    private bool isIce;
+
+
+    void Awake()
     {
         rb = GetComponent<Rigidbody>();
         anim = GetComponent<Animator>();
+
+        rb.freezeRotation = true;
+
+        defaultMoveSpeed = moveSpeed;
+        defaultDamping = rb.linearDamping;
+
         wasGrounded = true;
-        Player p = GetComponent<Player>();
-        if (p != null)
-        {
-            // 2P自身が持つPlayerMoveの速度を、Playerスクリプトに強制適用する
-            p.moveSpeed = this.moveSpeed; 
-        }
     }
 
-    // 脳(Controller)から呼ばれる移動命令
+
+    // =========================
+    // 移動
+    // =========================
     public void PerformMove(float h, float v)
     {
         Hook hook = GetComponentInChildren<Hook>();
@@ -36,86 +53,187 @@ public class Player : MonoBehaviour
             return;
         }
 
+
         Vector3 move =
             transform.forward * v +
             transform.right * h;
 
-        Vector3 velocity = move * moveSpeed;
+
+        float speed = moveSpeed;
+
+        if (isIce)
+        {
+            speed *= iceMoveMultiplier;
+        }
+
+
+        Vector3 velocity = move * speed;
 
         velocity.y = rb.linearVelocity.y;
 
         rb.linearVelocity = velocity;
-    }
 
-    // 風の影響を適用
-    public void ApplyWind(Vector3 direction, float power)
-    {
-        float multiplier = isGrounded ? 1f : airWindMultiplier;
-        rb.AddForce(direction.normalized * power * multiplier, ForceMode.Force);
-    }
 
-    // ジャンプの物理実行
-    public void PerformJump(float force)
-    {
-        PlayerMove moveScript = GetComponent<PlayerMove>();
-        if (moveScript != null && moveScript.playerID == 2)
+        if (move.sqrMagnitude > 0.01f)
         {
-            // 💡 1P用の裏システムが勝手に呼ぶ時、引数のforceは「1Pのジャンプ力（例: 7fなど）」になります。
-            // 2Pが自力で跳ぶ時は、あえてforceを「0」にして呼び出すことで、このガードをすり抜けます。
-            if (force > 0f) return; 
+            Rotate(move);
+        }
+    }
+
+
+
+    // =========================
+    // ジャンプ
+    // =========================
+    public void PerformJump()
+    {
+        if (!isGrounded)
+            return;
+
+
+        rb.linearVelocity =
+            new Vector3(
+                rb.linearVelocity.x,
+                0f,
+                rb.linearVelocity.z
+            );
+
+
+        rb.AddForce(
+            Vector3.up * jumpForce,
+            ForceMode.Impulse
+        );
+
+
+        if(anim != null)
+        {
+            anim.SetTrigger("Jump");
         }
 
-        rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
-        rb.AddForce(Vector3.up * force, ForceMode.Impulse);
-        anim.SetTrigger("Jump");
+
         isGrounded = false;
     }
 
-    public void Rotate(Vector3 direction)
+
+
+    // =========================
+    // 回転
+    // =========================
+    void Rotate(Vector3 direction)
     {
-        // 入力（スティックの傾きなど）がほとんどない時は回転させない
-        if (direction.sqrMagnitude > 0.01f)
+        Quaternion target =
+            Quaternion.LookRotation(direction);
+
+
+        transform.rotation =
+            Quaternion.Slerp(
+                transform.rotation,
+                target,
+                Time.deltaTime * 10f
+            );
+    }
+
+
+
+    // =========================
+    // 風
+    // =========================
+    public void ApplyWind(Vector3 direction, float power)
+    {
+        float multiplier =
+            isGrounded ? 1f : airWindMultiplier;
+
+
+        rb.AddForce(
+            direction.normalized *
+            power *
+            multiplier,
+            ForceMode.Force
+        );
+    }
+
+
+
+    // =========================
+    // 氷
+    // =========================
+    public void SetIceState(bool value)
+    {
+        isIce = value;
+
+
+        if(value)
         {
-            // 進みたい方向（direction）を向く回転を作る
-            Quaternion targetRotation = Quaternion.LookRotation(direction);
-            
-            // 瞬間的に向きを変える場合
-            transform.rotation = targetRotation;
-            
-            // もし「滑らかに」回転させたい場合はこちら（お好みで）
-            // transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 10f);
+            rb.linearDamping = iceDamping;
+        }
+        else
+        {
+            rb.linearDamping = defaultDamping;
         }
     }
 
-    // 接地判定の更新とアニメーション同期
+
+
+    // =========================
+    // Animator更新
+    // =========================
     public void UpdatePhysicsState()
     {
-        if (anim == null) return;
-        anim.SetBool("Grounded", isGrounded);
+        if(anim == null)
+            return;
 
-        Vector3 horizontalVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
-        anim.SetFloat("MoveSpeed", horizontalVelocity.magnitude);
 
-        if (!wasGrounded && isGrounded)
+        anim.SetBool(
+            "Grounded",
+            isGrounded
+        );
+
+
+        Vector3 velocity =
+            rb.linearVelocity;
+
+
+        velocity.y = 0;
+
+
+        anim.SetFloat(
+            "MoveSpeed",
+            velocity.magnitude
+        );
+
+
+        if(!wasGrounded && isGrounded)
         {
             anim.SetTrigger("Land");
         }
+
+
         wasGrounded = isGrounded;
     }
 
-    // --- 接地判定ロジック ---
+
+
+    // =========================
+    // 接地判定
+    // =========================
     void OnCollisionStay(Collision collision)
     {
-        isGrounded = false;
-        foreach (ContactPoint contact in collision.contacts)
+        foreach(ContactPoint contact in collision.contacts)
         {
-            if (contact.normal.y > 0.5f)
+            if(contact.normal.y > 0.5f)
             {
                 isGrounded = true;
                 return;
             }
         }
+
+
+        isGrounded = false;
     }
 
-    void OnCollisionExit(Collision collision) => isGrounded = false;
+
+    void OnCollisionExit(Collision collision)
+    {
+        isGrounded = false;
+    }
 }

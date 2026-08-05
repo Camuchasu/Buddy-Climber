@@ -7,8 +7,8 @@ public class IceFloor : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            PlayerMove player =
-                collision.gameObject.GetComponent<PlayerMove>();
+            Player player =
+                collision.gameObject.GetComponent<Player>();
 
             if (player != null)
             {
@@ -17,12 +17,13 @@ public class IceFloor : MonoBehaviour
         }
     }
 
+
     private void OnCollisionExit(Collision collision)
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            PlayerMove player =
-                collision.gameObject.GetComponent<PlayerMove>();
+            Player player =
+                collision.gameObject.GetComponent<Player>();
 
             if (player != null)
             {

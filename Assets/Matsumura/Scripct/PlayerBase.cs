@@ -1,77 +1,134 @@
-using System.Collections.Generic;
 using UnityEngine;
-//プレイヤーの基本的な機能をまとめたクラス。移動、ジャンプ、スタミナ管理、風の影響などを統括します。
-public class PlayerBase : CharaBase
+using UnityEngine.InputSystem;
+
+public class PlayerBase : MonoBehaviour
 {
- public Player motor;
-    public PlayerStamina2 stamina; // 先ほど作成したスタミナスクリプト
-    private WindSystem wind;
+    [Header("プレイヤー本体")]
+    public Player player;
+
+    [Header("スタミナ")]
+    public PlayerStamina2 stamina;
+
+    [Header("Input")]
+    public InputActionReference moveAction;
+    public InputActionReference jumpAction;
+
 
     [Header("ジャンプ設定")]
-    public float jumpForce = 10f;
-    public float coyoteTime = 0.30f;
-    public float jumpBufferTime = 0.30f;
+    public float jumpStaminaCost = 20f;
 
-    private float coyoteTimer;
-    private float jumpBufferTimer;
 
-    [Header("ジャンプキー")]
-    public KeyCode jumpKey = KeyCode.Space;
+    private WindSystem wind;
+
+
+
+    void Awake()
+    {
+        if(player == null)
+        {
+            player = GetComponent<Player>();
+        }
+    }
+
+
 
     void Start()
     {
         wind = FindObjectOfType<WindSystem>();
     }
 
+
+
+    void OnEnable()
+    {
+        moveAction.action.Enable();
+        jumpAction.action.Enable();
+    }
+
+
+
+    void OnDisable()
+    {
+        moveAction.action.Disable();
+        jumpAction.action.Disable();
+    }
+
+
+
+
     void Update()
     {
-        // 1. 入力受付
-        UpdateTimers();
-
-        // 2. ジャンプ判断（スタミナ消費と連動）
-        if (jumpBufferTimer > 0 && coyoteTimer > 0)
+        // ジャンプ入力
+        if(jumpAction.action.WasPressedThisFrame())
         {
-            // ジャンプ時にスタミナを20消費する例
-            if (stamina != null && stamina.UseStamina(20f))
-            {
-                motor.PerformJump(jumpForce);
-                jumpBufferTimer = 0;
-            }
+            TryJump();
         }
 
-        motor.UpdatePhysicsState();
+
+        player.UpdatePhysicsState();
     }
+
+
+
 
     void FixedUpdate()
     {
-        // 3. 移動命令
-        float h = Input.GetAxis("Horizontal");
-        float v = Input.GetAxis("Vertical");
+        // 移動入力
+        Vector2 input =
+            moveAction.action.ReadValue<Vector2>();
 
-        // スタミナがある時だけ動ける（あるいはスタミナ切れで鈍足にするなど）
-        if (stamina == null || stamina.currentStamina > 0)
+
+        float h = input.x;
+        float v = input.y;
+
+
+
+        // スタミナがある時だけ移動
+        if(stamina == null ||
+           stamina.currentStamina > 0)
         {
-            motor.PerformMove(h, v);
+            player.PerformMove(h, v);
         }
 
-        // 4. 風の影響
-        if (wind != null && wind.IsBlowing)
+
+
+        // 風
+        if(wind != null &&
+           wind.IsBlowing)
         {
-            motor.ApplyWind(wind.windDirection, wind.windPower);
+            player.ApplyWind(
+                wind.windDirection,
+                wind.windPower
+            );
         }
     }
 
-    void UpdateTimers()
+
+
+
+
+    void TryJump()
     {
-        if (Input.GetKeyDown(jumpKey))
-            jumpBufferTimer = jumpBufferTime;
-        else
-            jumpBufferTimer -= Time.deltaTime;
+        if(player == null)
+            return;
 
-        if (motor.isGrounded)
-            coyoteTimer = coyoteTime;
-        else
-            coyoteTimer -= Time.deltaTime;
-}
-}
 
+        if(!player.isGrounded)
+            return;
+
+
+
+        if(stamina == null)
+        {
+            player.PerformJump();
+            return;
+        }
+
+
+
+        if(stamina.UseStamina(jumpStaminaCost))
+        {
+            player.PerformJump();
+        }
+    }
+}

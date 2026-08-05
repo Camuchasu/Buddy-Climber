@@ -398,9 +398,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player1: {fileID: 1650737610}
   player2: {fileID: 1741658544}
-  pullForce: 15
   maxDistance: 4
+  minDistance: 1.5
+  pullForce: 15
   reelSpeed: 5
+  player1ReelAction: {fileID: 3435468608082150562, guid: 6dafb9c32ea668748a763ac2e20a17cd, type: 3}
+  player2ReelAction: {fileID: 3435468608082150562, guid: 6dafb9c32ea668748a763ac2e20a17cd, type: 3}
 --- !u!4 &189327507
 Transform:
   m_ObjectHideFlags: 0
@@ -754,9 +757,6 @@ PrefabInstance:
       addedObject: {fileID: 1650737606}
     - targetCorrespondingSourceObject: {fileID: 6490136728237138907, guid: d5b4b9e82e6e45e4283c6435e743b647, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1650737605}
-    - targetCorrespondingSourceObject: {fileID: 6490136728237138907, guid: d5b4b9e82e6e45e4283c6435e743b647, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 1650737604}
     - targetCorrespondingSourceObject: {fileID: 6490136728237138907, guid: d5b4b9e82e6e45e4283c6435e743b647, type: 3}
       insertIndex: -1
@@ -988,11 +988,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &661695095 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 5346491433526078825, guid: d5b4b9e82e6e45e4283c6435e743b647, type: 3}
-  m_PrefabInstance: {fileID: 957072441}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &957072441
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1082,19 +1077,11 @@ PrefabInstance:
       addedObject: {fileID: 1741658540}
     - targetCorrespondingSourceObject: {fileID: 6490136728237138907, guid: d5b4b9e82e6e45e4283c6435e743b647, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1741658539}
-    - targetCorrespondingSourceObject: {fileID: 6490136728237138907, guid: d5b4b9e82e6e45e4283c6435e743b647, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 1741658538}
     - targetCorrespondingSourceObject: {fileID: 6490136728237138907, guid: d5b4b9e82e6e45e4283c6435e743b647, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1741658537}
   m_SourcePrefab: {fileID: 100100000, guid: d5b4b9e82e6e45e4283c6435e743b647, type: 3}
---- !u!4 &1078643120 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 5346491433526078825, guid: d5b4b9e82e6e45e4283c6435e743b647, type: 3}
-  m_PrefabInstance: {fileID: 469903809}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1183287539
 GameObject:
   m_ObjectHideFlags: 0
@@ -11580,40 +11567,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e6f975041b31684da47e7098090b2af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_maxHp: 10
-  motor: {fileID: 1650737606}
+  player: {fileID: 0}
   stamina: {fileID: 1650737603}
-  jumpForce: 8
-  coyoteTime: 0.3
-  jumpBufferTime: 0.3
-  jumpKey: 32
---- !u!114 &1650737605
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1650737602}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 489fcaaee0193d64caee76d03c782a00, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  playerID: 1
-  modelTransform: {fileID: 1078643120}
-  rotationSpeed: 10
-  modelRotationOffset: 0
-  moveSpeed: 5
-  stepHeight: 0.8
-  stepSmooth: 5
-  jumpForce: 5
+  moveAction: {fileID: 4013674826351769875, guid: 6dafb9c32ea668748a763ac2e20a17cd, type: 3}
+  jumpAction: {fileID: -4852670161432213340, guid: 6dafb9c32ea668748a763ac2e20a17cd, type: 3}
   jumpStaminaCost: 20
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 64
-  playerHeight: 2
-  groundCheckRadius: 0.12
-  groundCheckDistance: 0.05
 --- !u!114 &1650737606
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11626,9 +11584,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4633148e0f44f044ba5303f0666fd083, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rb: {fileID: 1650737607}
   moveSpeed: 12
+  jumpForce: 10
   airWindMultiplier: 1.5
+  iceMoveMultiplier: 0.6
+  iceDamping: 0.05
 --- !u!54 &1650737607
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -11709,6 +11669,9 @@ MonoBehaviour:
   springPower: 100
   damperPower: 7
   reelSpeed: 5
+  hookAction: {fileID: 5527831872560480259, guid: 6dafb9c32ea668748a763ac2e20a17cd, type: 3}
+  reelAction: {fileID: 3435468608082150562, guid: 6dafb9c32ea668748a763ac2e20a17cd, type: 3}
+  cancelAction: {fileID: -4998050218738250961, guid: 6dafb9c32ea668748a763ac2e20a17cd, type: 3}
 --- !u!120 &1650737612
 LineRenderer:
   serializedVersion: 2
@@ -12217,40 +12180,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e6f975041b31684da47e7098090b2af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_maxHp: 10
-  motor: {fileID: 1741658540}
+  player: {fileID: 0}
   stamina: {fileID: 1741658537}
-  jumpForce: 11
-  coyoteTime: 0.3
-  jumpBufferTime: 0.3
-  jumpKey: 305
---- !u!114 &1741658539
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1741658536}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 489fcaaee0193d64caee76d03c782a00, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  playerID: 2
-  modelTransform: {fileID: 661695095}
-  rotationSpeed: 10
-  modelRotationOffset: 0
-  moveSpeed: 5
-  stepHeight: 0.8
-  stepSmooth: 5
-  jumpForce: 8
+  moveAction: {fileID: 4013674826351769875, guid: 6dafb9c32ea668748a763ac2e20a17cd, type: 3}
+  jumpAction: {fileID: -4852670161432213340, guid: 6dafb9c32ea668748a763ac2e20a17cd, type: 3}
   jumpStaminaCost: 20
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 64
-  playerHeight: 2
-  groundCheckRadius: 0.12
-  groundCheckDistance: 0.05
 --- !u!114 &1741658540
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12263,9 +12197,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4633148e0f44f044ba5303f0666fd083, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rb: {fileID: 1741658541}
   moveSpeed: 12
+  jumpForce: 10
   airWindMultiplier: 1.5
+  iceMoveMultiplier: 0.6
+  iceDamping: 0.05
 --- !u!54 &1741658541
 Rigidbody:
   m_ObjectHideFlags: 0

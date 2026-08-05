@@ -1,3 +1,4 @@
+using UnityEngine.InputSystem;
 using UnityEngine;
 
 public class Hook : MonoBehaviour
@@ -53,12 +54,35 @@ public class Hook : MonoBehaviour
     // Joint
     private SpringJoint joint;
 
+    [SerializeField]
+    private InputActionReference hookAction;
+
+    [SerializeField]
+    private InputActionReference reelAction;
+
+    [SerializeField]
+    private InputActionReference cancelAction;
+
     void Start()
     {
         if (lineRenderer != null)
         {
             lineRenderer.enabled = false;
         }
+    }
+
+    void OnEnable()
+    {
+        hookAction.action.Enable();
+        reelAction.action.Enable();
+        cancelAction.action.Enable();
+    }
+
+    void OnDisable()
+    {
+        hookAction.action.Disable();
+        reelAction.action.Disable();
+        cancelAction.action.Disable();
     }
 
     void Update()
@@ -76,7 +100,7 @@ public class Hook : MonoBehaviour
             DrawGrappleLine();
 
             // 左Shiftを押している間ロープを巻き取る
-            if (Input.GetKey(KeyCode.LeftShift) && joint != null)
+            if (reelAction.action.IsPressed() && joint != null)
             {
                 joint.maxDistance -= reelSpeed * Time.deltaTime;
 
@@ -98,7 +122,7 @@ public class Hook : MonoBehaviour
         if (!isGrappling)
         {
             // E押した瞬間
-            if (Input.GetKeyDown(KeyCode.E))
+            if (hookAction.action.WasPressedThisFrame())
             {
                 isCharging = true;
 
@@ -108,7 +132,7 @@ public class Hook : MonoBehaviour
             }
 
             // E離した瞬間
-            if (Input.GetKeyUp(KeyCode.E))
+            if (hookAction.action.WasPressedThisFrame())
             {
                 isCharging = false;
 
@@ -117,7 +141,7 @@ public class Hook : MonoBehaviour
         }
 
         // Spaceで解除
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (cancelAction.action.WasPressedThisFrame())
         {
             StopGrapple();
         }
